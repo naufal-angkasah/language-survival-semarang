@@ -4,8 +4,9 @@ import { exportToCsv } from '../utils/exportCsv';
 import { 
   Users, Award, BookOpen, Download, Plus, Trash2, 
   Search, ArrowLeft, CheckCircle2, TrendingUp,
-  FileSpreadsheet, ShieldAlert
+  FileSpreadsheet, ShieldAlert, Volume2, VolumeX
 } from 'lucide-react';
+import { speakIndonesian, stopSpeech, EmotionTone } from '../utils/speechEngine';
 
 interface AdminDashboardProps {
   respondents: RespondentRecord[];
@@ -33,7 +34,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [newPhraseEn, setNewPhraseEn] = useState('');
   const [newPhonetic, setNewPhonetic] = useState('');
   const [newCategory, setNewCategory] = useState<CategoryId>('transport');
+  const [newEmotionTone, setNewEmotionTone] = useState<EmotionTone>('casual');
   const [newContextNote, setNewContextNote] = useState('');
+  const [testingPhraseId, setTestingPhraseId] = useState<string | null>(null);
 
   // Compute Research Analytics
   const totalRespondents = respondents.length;
@@ -94,6 +97,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       contextNoteEn: newContextNote || 'Practical adaptation note.',
       tags: ['custom', newCategory],
       isImportant: true,
+      emotionTone: newEmotionTone,
     };
 
     onAddPhrase(newPhrase);
@@ -101,6 +105,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setNewPhraseEn('');
     setNewPhonetic('');
     setNewContextNote('');
+    setNewEmotionTone('casual');
     setIsAddingPhrase(false);
   };
 
@@ -423,6 +428,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       <option value="culture">Culture Shock</option>
                     </select>
                   </div>
+                  <div className="sm:col-span-2">
+                    <label className="block font-bold text-slate-700 mb-1">Intonasi Emosi Suara Lokal:</label>
+                    <select
+                      value={newEmotionTone}
+                      onChange={(e) => setNewEmotionTone(e.target.value as EmotionTone)}
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900"
+                    >
+                      <option value="shout">📢 Seruan Angkot (Lantang & Berenergi)</option>
+                      <option value="polite">🙏 Santun Jawa (Halus & Hangat)</option>
+                      <option value="emergency">🚨 Darurat Medis (Mendesak & Panik)</option>
+                      <option value="culinary">🍜 Pesan Warung (Akrab & Ramah)</option>
+                      <option value="inquiry">❓ Bertanya Sopan (Intonasi Penasaran)</option>
+                      <option value="casual">💬 Santai Keseharian (Natural)</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div>
@@ -454,7 +474,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </form>
             )}
 
-            {/* List of Phrases with Delete Action */}
+            {/* List of Phrases with Audio Test & Delete Action */}
             <div className="space-y-2">
               {phrases.map((p) => (
                 <div
@@ -471,13 +491,44 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <p className="text-slate-500 truncate">{p.phraseEn}</p>
                   </div>
 
-                  <button
-                    onClick={() => onDeletePhrase(p.id)}
-                    className="p-1.5 text-slate-300 hover:text-rose-600 transition"
-                    title="Hapus frasa"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {/* Audio Test Button */}
+                    <button
+                      onClick={() => {
+                        if (testingPhraseId === p.id) {
+                          stopSpeech();
+                          setTestingPhraseId(null);
+                        } else {
+                          setTestingPhraseId(p.id);
+                          speakIndonesian(p.phraseId, p.emotionTone, {
+                            onStart: () => setTestingPhraseId(p.id),
+                            onEnd: () => setTestingPhraseId(null),
+                            onError: () => setTestingPhraseId(null),
+                          });
+                        }
+                      }}
+                      className={`p-1.5 rounded-lg border transition ${
+                        testingPhraseId === p.id
+                          ? 'bg-blue-600 text-white border-blue-600 animate-pulse'
+                          : 'bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200'
+                      }`}
+                      title="Uji pelafalan suara emosional frasa ini"
+                    >
+                      {testingPhraseId === p.id ? (
+                        <VolumeX className="w-3.5 h-3.5" />
+                      ) : (
+                        <Volume2 className="w-3.5 h-3.5" />
+                      )}
+                    </button>
+
+                    <button
+                      onClick={() => onDeletePhrase(p.id)}
+                      className="p-1.5 text-slate-300 hover:text-rose-600 transition"
+                      title="Hapus frasa"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>

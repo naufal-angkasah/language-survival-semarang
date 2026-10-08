@@ -1,6 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { SurvivalPhrase, Language } from '../types';
-import { Volume2, VolumeX, Bookmark, BookmarkCheck, CheckCircle, Info } from 'lucide-react';
+import { 
+  Volume2, 
+  VolumeX, 
+  Bookmark, 
+  BookmarkCheck, 
+  CheckCircle, 
+  Info, 
+  Sparkles,
+  Gauge
+} from 'lucide-react';
+import { 
+  speakIndonesian, 
+  stopSpeech, 
+  getProsodyForTone, 
+  detectEmotionTone, 
+  EmotionTone 
+} from '../utils/speechEngine';
 
 interface PhraseCardProps {
   phrase: SurvivalPhrase;
@@ -16,86 +32,50 @@ export const PhraseCard: React.FC<PhraseCardProps> = ({
   onToggleBookmark,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [idVoice, setIdVoice] = useState<SpeechSynthesisVoice | null>(null);
+  const [isSlowMode, setIsSlowMode] = useState(false);
 
-  // Pre-load and select the most expressive & natural Indonesian voice available on the device
-  useEffect(() => {
-    const updateVoices = () => {
-      if (!('speechSynthesis' in window)) return;
-      const voices = window.speechSynthesis.getVoices();
-      
-      // Prioritize modern natural/neural Indonesian voices (Google, Microsoft Natural, Apple Damayanti)
-      const bestIdVoice =
-        voices.find((v) => (v.lang === 'id-ID' || v.lang === 'id_ID') && (v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Google'))) ||
-        voices.find((v) => v.lang.toLowerCase().startsWith('id')) ||
-        null;
+  // Determine emotional tone for this phrase
+  const tone: EmotionTone = phrase.emotionTone || detectEmotionTone(phrase.phraseId, phrase.categoryId);
+  const prosody = getProsodyForTone(tone, isSlowMode);
 
-      if (bestIdVoice) {
-        setIdVoice(bestIdVoice);
-      }
-    };
+  // Play audio with local emotional inflection
+  const handlePlayAudio = (slowOverride?: boolean) => {
+    const useSlow = slowOverride !== undefined ? slowOverride : isSlowMode;
 
-    updateVoices();
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.onvoiceschanged = updateVoices;
-    }
-  }, []);
-
-  // Enhanced Speech Engine with Local Emotional Prosody (Intonasi Percakapan Warga Lokal)
-  const handlePlayAudio = () => {
-    if (!('speechSynthesis' in window)) {
-      alert('Browser tidak mendukung pemutar suara.');
+    if (isPlaying) {
+      stopSpeech();
+      setIsPlaying(false);
       return;
     }
 
-    window.speechSynthesis.cancel(); // stop any active audio immediately
-
-    const text = phrase.phraseId.trim();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'id-ID';
-
-    // Assign the most natural voice if detected
-    if (idVoice) {
-      utterance.voice = idVoice;
-    }
-
-    // Dynamic Prosody & Emotional Inflection based on local conversational context:
-    if (text.endsWith('?')) {
-      // Intonasi bertanya (Friendly Question: nada sedikit naik di ujung kata, tempo natural)
-      utterance.pitch = 1.12;
-      utterance.rate = 1.0;
-    } else if (text.endsWith('!') || text.toLowerCase().includes('kiri') || text.toLowerCase().includes('tolong')) {
-      // Intonasi seruan tegas / minta tolong / teriak angkot ("Kiri, Pak!" - bertenaga, jelas, bersemangat)
-      utterance.pitch = 1.1;
-      utterance.rate = 1.05;
-    } else if (text.toLowerCase().includes('nuwun sewu') || text.toLowerCase().includes('monggo') || text.toLowerCase().includes('matur')) {
-      // Intonasi santun Jawa (Halus, ramah, hangat / "grapyak", tempo mengayun sopan)
-      utterance.pitch = 1.04;
-      utterance.rate = 0.95;
-    } else {
-      // Percakapan sehari-hari mengalir normal
-      utterance.pitch = 1.06;
-      utterance.rate = 0.98;
-    }
-
-    utterance.onstart = () => setIsPlaying(true);
-    utterance.onend = () => setIsPlaying(false);
-    utterance.onerror = () => setIsPlaying(false);
-
-    window.speechSynthesis.speak(utterance);
+    speakIndonesian(phrase.phraseId, tone, {
+      isSlow: useSlow,
+      onStart: () => setIsPlaying(true),
+      onEnd: () => setIsPlaying(false),
+      onError: () => setIsPlaying(false),
+    });
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs hover:border-blue-300 transition">
-      {/* Top Bar: Key Phrase Tag & Bookmark */}
+    <div className={`bg-white border rounded-2xl p-4 transition shadow-xs ${
+      isPlaying ? 'border-blue-500 ring-2 ring-blue-100 shadow-md' : 'border-slate-200 hover:border-blue-300'
+    }`}>
+      {/* Top Bar: Key Phrase Tag, Emotion Badge, & Bookmark */}
       <div className="flex items-center justify-between gap-2 mb-2.5">
         <div className="flex items-center gap-1.5 flex-wrap">
           {phrase.isImportant && (
             <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 border border-blue-200/80 text-[10px] font-bold px-2 py-0.5 rounded-full">
               <CheckCircle className="w-2.5 h-2.5 text-blue-600" />
-              {language === 'id' ? 'Frasa Penting' : 'Key Phrase'}
+              {language === 'id' ? 'Frasa Kunci' : 'Key Phrase'}
             </span>
           )}
+
+          {/* Emotional Prosody Indicator Badge */}
+          <span className={`inline-flex items-center gap-1 border text-[10px] font-bold px-2 py-0.5 rounded-full ${prosody.badgeStyle}`}>
+            <span>{prosody.icon}</span>
+            <span>{language === 'id' ? (phrase.emotionLabelId || prosody.labelId) : (phrase.emotionLabelEn || prosody.labelEn)}</span>
+          </span>
+
           {phrase.tags.map((tag) => (
             <span
               key={tag}
@@ -108,7 +88,7 @@ export const PhraseCard: React.FC<PhraseCardProps> = ({
 
         <button
           onClick={() => onToggleBookmark(phrase.id)}
-          className="text-slate-300 hover:text-blue-600 transition p-1"
+          className="text-slate-300 hover:text-blue-600 transition p-1 shrink-0"
           aria-label="Bookmark phrase"
           title={isBookmarked ? 'Tersimpan' : 'Simpan frasa'}
         >
@@ -142,25 +122,63 @@ export const PhraseCard: React.FC<PhraseCardProps> = ({
             </p>
           </div>
 
-          {/* Large Audio Speaker Button (Clean Royal Blue 48x48 Touch Target) */}
-          <button
-            onClick={handlePlayAudio}
-            className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 active-press transition shadow-sm ${
-              isPlaying
-                ? 'bg-blue-800 text-white ring-4 ring-blue-100 animate-pulse'
-                : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/20'
-            }`}
-            aria-label="Dengarkan pelafalan emosional warga lokal"
-            title="Dengarkan pelafalan natural"
-          >
-            {isPlaying ? (
-              <VolumeX className="w-6 h-6 animate-pulse" />
-            ) : (
-              <Volume2 className="w-6 h-6 text-white" />
-            )}
-          </button>
+          {/* Interactive Audio Controls Container */}
+          <div className="flex flex-col items-center gap-1.5 shrink-0">
+            {/* Large Audio Speaker Button (Clean Royal Blue 48x48 Touch Target) */}
+            <button
+              onClick={() => handlePlayAudio()}
+              className={`w-12 h-12 rounded-2xl flex items-center justify-center active-press transition shadow-sm ${
+                isPlaying
+                  ? 'bg-blue-800 text-white ring-4 ring-blue-100 animate-pulse'
+                  : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/20'
+              }`}
+              aria-label="Dengarkan suara emosional warga lokal"
+              title={isPlaying ? 'Hentikan audio' : 'Dengarkan suara lokal'}
+            >
+              {isPlaying ? (
+                <VolumeX className="w-6 h-6 animate-pulse" />
+              ) : (
+                <Volume2 className="w-6 h-6 text-white" />
+              )}
+            </button>
+
+            {/* Slow Speed (0.8x) Articulation Toggle for BIPA Students */}
+            <button
+              onClick={() => {
+                const nextSlow = !isSlowMode;
+                setIsSlowMode(nextSlow);
+                handlePlayAudio(nextSlow);
+              }}
+              className={`text-[9px] font-bold px-2 py-0.5 rounded-full border transition flex items-center gap-0.5 ${
+                isSlowMode
+                  ? 'bg-blue-100 text-blue-800 border-blue-300'
+                  : 'bg-slate-50 hover:bg-slate-100 text-slate-500 border-slate-200'
+              }`}
+              title="Putar suara tempo lambat (0.8x) untuk latihan artikulasi lidah"
+            >
+              <Gauge className="w-2.5 h-2.5" />
+              <span>{isSlowMode ? '0.8x Pelan' : '1.0x Alami'}</span>
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Speaking Active Indicator Banner */}
+      {isPlaying && (
+        <div className="bg-blue-50/80 border border-blue-200 rounded-xl px-3 py-1.5 mb-2.5 flex items-center justify-between text-xs text-blue-900 animate-fadeIn">
+          <div className="flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-blue-600 animate-spin" />
+            <span className="font-semibold">
+              {language === 'id' 
+                ? `Memutar intonasi lokal: ${phrase.emotionLabelId || prosody.labelId}`
+                : `Playing local prosody: ${phrase.emotionLabelEn || prosody.labelEn}`}
+            </span>
+          </div>
+          <span className="text-[10px] font-mono font-bold text-blue-700 bg-white border border-blue-200 px-1.5 py-0.5 rounded">
+            {isSlowMode ? 'Tempo 0.8x' : 'Tempo Normal'}
+          </span>
+        </div>
+      )}
 
       {/* Cultural Adaptation Context Note */}
       {phrase.contextNoteId && (

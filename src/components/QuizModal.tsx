@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { QuizQuestion, Language } from '../types';
-import { CheckCircle2, XCircle, RotateCcw, Award, ArrowRight } from 'lucide-react';
+import { CheckCircle2, XCircle, RotateCcw, Award, ArrowRight, Volume2, VolumeX } from 'lucide-react';
+import { speakIndonesian, stopSpeech } from '../utils/speechEngine';
 
 interface QuizModalProps {
   questions: QuizQuestion[];
@@ -12,8 +13,24 @@ export const QuizModal: React.FC<QuizModalProps> = ({ questions, language }) => 
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
+  const [playingAudioId, setPlayingAudioId] = useState<string | null>(null);
 
   const currentQ = questions[currentIdx];
+
+  const handlePlayVoice = (id: string, text: string) => {
+    if (playingAudioId === id) {
+      stopSpeech();
+      setPlayingAudioId(null);
+      return;
+    }
+
+    setPlayingAudioId(id);
+    speakIndonesian(text, 'inquiry', {
+      onStart: () => setPlayingAudioId(id),
+      onEnd: () => setPlayingAudioId(null),
+      onError: () => setPlayingAudioId(null),
+    });
+  };
 
   const handleSelectOption = (optId: string) => {
     if (selectedOption !== null) return;
@@ -26,6 +43,8 @@ export const QuizModal: React.FC<QuizModalProps> = ({ questions, language }) => 
   };
 
   const handleNext = () => {
+    stopSpeech();
+    setPlayingAudioId(null);
     if (currentIdx < questions.length - 1) {
       setCurrentIdx((prev) => prev + 1);
       setSelectedOption(null);
@@ -35,6 +54,8 @@ export const QuizModal: React.FC<QuizModalProps> = ({ questions, language }) => 
   };
 
   const handleReset = () => {
+    stopSpeech();
+    setPlayingAudioId(null);
     setCurrentIdx(0);
     setSelectedOption(null);
     setScore(0);
@@ -77,11 +98,34 @@ export const QuizModal: React.FC<QuizModalProps> = ({ questions, language }) => 
             </span>
           </div>
 
-          {/* Skenario Situasi */}
+          {/* Skenario Situasi with Audio Reader */}
           <div className="bg-blue-50/60 border border-blue-100 rounded-xl p-3 text-xs text-slate-800">
-            <span className="font-bold text-blue-900 block mb-0.5">
-              📍 {language === 'id' ? 'Skenario Situasi:' : 'Scenario:'}
-            </span>
+            <div className="flex items-center justify-between mb-1">
+              <span className="font-bold text-blue-900 block">
+                📍 {language === 'id' ? 'Skenario Situasi:' : 'Scenario:'}
+              </span>
+              <button
+                onClick={() => handlePlayVoice('scenario', `${currentQ.situationId}. ${currentQ.questionId}`)}
+                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border transition ${
+                  playingAudioId === 'scenario'
+                    ? 'bg-blue-600 text-white border-blue-600 animate-pulse'
+                    : 'bg-white hover:bg-blue-50 text-blue-700 border-blue-200'
+                }`}
+                title="Dengarkan pembacaan skenario situasi dengan suara intonasi lokal"
+              >
+                {playingAudioId === 'scenario' ? (
+                  <>
+                    <VolumeX className="w-3 h-3" />
+                    <span>Hentikan</span>
+                  </>
+                ) : (
+                  <>
+                    <Volume2 className="w-3 h-3 text-blue-600" />
+                    <span>Dengarkan Soal</span>
+                  </>
+                )}
+              </button>
+            </div>
             <p className="leading-relaxed text-slate-700">
               {language === 'id' ? currentQ.situationId : currentQ.situationEn}
             </p>
@@ -131,13 +175,22 @@ export const QuizModal: React.FC<QuizModalProps> = ({ questions, language }) => 
                   {/* Penjelasan jika sudah dijawab */}
                   {hasAnswered && (isChosen || opt.isCorrect) && (
                     <div
-                      className={`text-[11px] p-2.5 rounded-lg mt-1 ml-7 ${
+                      className={`text-[11px] p-2.5 rounded-lg mt-1 ml-7 flex items-start justify-between gap-2 ${
                         opt.isCorrect
                           ? 'bg-emerald-100/70 text-emerald-900'
                           : 'bg-rose-100/70 text-rose-900'
                       }`}
                     >
-                      {language === 'id' ? opt.explanationId : opt.explanationEn}
+                      <p className="flex-1 leading-relaxed">
+                        {language === 'id' ? opt.explanationId : opt.explanationEn}
+                      </p>
+                      <button
+                        onClick={() => handlePlayVoice(`exp-${opt.id}`, opt.explanationId)}
+                        className="text-slate-600 hover:text-slate-900 shrink-0 p-1 rounded hover:bg-black/5"
+                        title="Dengarkan penjelasan suara"
+                      >
+                        <Volume2 className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   )}
                 </div>

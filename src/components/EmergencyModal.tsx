@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { EmergencyContact, Language } from '../types';
-import { Phone, MapPin, ExternalLink, ShieldAlert } from 'lucide-react';
+import { Phone, MapPin, ExternalLink, ShieldAlert, Volume2, VolumeX } from 'lucide-react';
+import { speakIndonesian, stopSpeech } from '../utils/speechEngine';
 
 interface EmergencyModalProps {
   contacts: EmergencyContact[];
@@ -11,6 +12,29 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
   contacts,
   language,
 }) => {
+  const [playingId, setPlayingId] = useState<string | null>(null);
+
+  const handleSpeakEmergency = (contact: EmergencyContact) => {
+    if (playingId === contact.id) {
+      stopSpeech();
+      setPlayingId(null);
+      return;
+    }
+
+    // Emergency spoken sentence in urgent local Indonesian tone
+    let spokenSentence = `Tolong! Saya butuh bantuan darurat untuk ${contact.name}. Segera hubungi ${contact.number}!`;
+    if (contact.number === '112') {
+      spokenSentence = 'Tolong! Panggilan darurat satu satu dua! Segera kirim bantuan ambulans ke lokasi saya!';
+    }
+
+    setPlayingId(contact.id);
+    speakIndonesian(spokenSentence, 'emergency', {
+      onStart: () => setPlayingId(contact.id),
+      onEnd: () => setPlayingId(null),
+      onError: () => setPlayingId(null),
+    });
+  };
+
   return (
     <div className="space-y-4 pb-12">
       {/* Alert Header in Clean Blue/Red Accent */}
@@ -24,8 +48,8 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
           </h3>
           <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
             {language === 'id'
-              ? 'Kontak penting untuk pertolongan medis darurat, laporan kepolisian, dan perlindungan mahasiswa asing.'
-              : 'Essential contacts for medical emergencies, police reports, and international student assistance.'}
+              ? 'Kontak penting untuk pertolongan medis darurat, laporan kepolisian, dan perlindungan mahasiswa asing. Tekan speaker untuk memutar audio darurat bertenaga.'
+              : 'Essential contacts for medical emergencies, police reports, and student assistance. Tap speaker to broadcast urgent voice call.'}
           </p>
         </div>
       </div>
@@ -35,12 +59,32 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
         {contacts.map((contact) => (
           <div
             key={contact.id}
-            className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs flex items-center justify-between gap-3"
+            className={`bg-white border rounded-2xl p-4 shadow-xs flex items-center justify-between gap-3 transition ${
+              playingId === contact.id ? 'border-blue-500 ring-2 ring-blue-100' : 'border-slate-200'
+            }`}
           >
             <div className="flex-1 min-w-0">
-              <h4 className="text-sm font-bold text-slate-900 truncate">
-                {contact.name}
-              </h4>
+              <div className="flex items-center gap-2">
+                <h4 className="text-sm font-bold text-slate-900 truncate">
+                  {contact.name}
+                </h4>
+                <button
+                  onClick={() => handleSpeakEmergency(contact)}
+                  className={`p-1 rounded-lg border transition ${
+                    playingId === contact.id
+                      ? 'bg-rose-600 text-white border-rose-600 animate-pulse'
+                      : 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100'
+                  }`}
+                  title="Putar suara panggilan darurat panik/mendesak"
+                >
+                  {playingId === contact.id ? (
+                    <VolumeX className="w-3.5 h-3.5" />
+                  ) : (
+                    <Volume2 className="w-3.5 h-3.5" />
+                  )}
+                </button>
+              </div>
+
               <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
                 {contact.category}
               </p>

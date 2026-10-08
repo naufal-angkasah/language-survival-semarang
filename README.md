@@ -45,10 +45,25 @@ Aplikasi buku saku digital interaktif berbasis **Web & Progressive Web App (PWA)
    * Kebiasaan bulan puasa Ramadan di masyarakat lokal.
    * Aturan umum jam malam kos mahasiswa.
 
-### 4. 🔊 Pemutar Audio Pelafalan (Native Speech Engine)
-* Tombol speaker audio ergonomis berukuran besar (**48 x 48 dp**) yang mudah disentuh.
-* Memutar pelafalan bahasa Indonesia yang fasih dan alami secara instan melalui *Web Speech Synthesis API*.
-* Dilengkapi teks panduan fonetik untuk memudahkan pembelajar pemula melafalkan intonasi kata yang benar.
+### 4. 🔊 Engine Suara Berintonasi Emosi Lokal (Local Emotional Prosody Speech Engine)
+* **6 Profil Intonasi Pragmatis Khas Warga Lokal:**
+  1. 📢 **Seruan Angkot (Lantang & Berenergi):** Pitch 1.15, tempo tegas dan bertenaga untuk berteriak turun di jalan (*"Kiri, Pak!... Kiri, Mas!"*).
+  2. 🙏 **Santun Jawa (Halus & Hangat / Grapyak):** Pitch 1.00, tempo mengayun santun (*"Nuwun sewu... Permisi, Pak... atau Bu"*).
+  3. 🚨 **Darurat Medis (Mendesak & Panik):** Pitch 1.16, tempo cepat dan cemas saat membutuhkan pertolongan rumah sakit atau polisi.
+  4. 🍜 **Pesan Warung (Akrab & Ramah):** Intonasi bersahabat saat memesan makanan di warung lokal/angkringan.
+  5. ❓ **Bertanya Sopan (Intonasi Penasaran):** Nada sedikit terangkat di akhir kalimat tanya.
+  6. 💬 **Santai Keseharian (Natural):** Ritme percakapan mengalir santai.
+* **Pembersihan Artefak Sintesis Robotik:**
+  * Menghilangkan pembacaan simbol garis miring (`/`) yang biasanya dibaca kaku sebagai *"garis miring"* oleh TTS standar, digantikan dengan jeda nafas alami percakapan (`"..."`).
+  * Penambahan jeda nafas mikro (*conversational breathing pause*) sebelum kata sapaan (*Pak, Bu, Mas, Mbak*) sehingga terdengar manusiawi dan santun.
+  * Optimalisasi pelafalan akronim lokal Semarang (*UNNES, UNDIP, RSUP, IGD, BRT*).
+* **Mode Kecepatan Ganda (Dual Speed Mode):**
+  * **1.0x Alami:** Pelafalan emosional standar penutur asli untuk pembiasaan telinga.
+  * **0.8x Pelan:** Tempo latihan artikulasi lidah dan fonetik bagi mahasiswa pemula program BIPA.
+* **Integrasi Audio Multimodal:**
+  * Audio narasi pembacaan skenario dan penjelasan pada Kuis Riset Disertasi.
+  * Audio panggilan darurat panik pada kontak darurat.
+  * Tombol uji dengar audio langsung di tabel CMS Web Admin Peneliti.
 
 ### 5. 🔍 Pencarian Pintar & Manajemen Frasa Favorit
 * **Instant Smart Search:** Menyaring kosakata secara *real-time* berdasarkan kata kunci bahasa Indonesia, bahasa Inggris, maupun konteks situasi.

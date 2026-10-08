@@ -64,7 +64,10 @@ export const INITIAL_SURVIVAL_PHRASES: SurvivalPhrase[] = [
     contextNoteId: 'Gunakan saat menaiki becak atau angkot konvensional. Selalu tanyakan tarif sebelum naik.',
     contextNoteEn: 'Use when riding a pedicab or traditional minibus. Always agree on the fare before boarding.',
     tags: ['becak', 'angkot', 'harga', 'fare'],
-    isImportant: true
+    isImportant: true,
+    emotionTone: 'inquiry',
+    emotionLabelId: 'Bertanya Sopan & Ramah',
+    emotionLabelEn: 'Polite & Friendly Inquiry'
   },
   {
     id: 'tr-02',
@@ -75,7 +78,10 @@ export const INITIAL_SURVIVAL_PHRASES: SurvivalPhrase[] = [
     contextNoteId: 'Trans Semarang adalah bus rapid transit utama di Semarang dengan tarif terjangkau (Rp 3.500 atau Rp 1.000 untuk pelajar/mahasiswa ber-KTM).',
     contextNoteEn: 'Trans Semarang is the main BRT in the city (Fare: IDR 3,500, or IDR 1,000 with a student ID).',
     tags: ['bus', 'trans semarang', 'halte'],
-    isImportant: true
+    isImportant: true,
+    emotionTone: 'polite',
+    emotionLabelId: 'Minta Tolong Santun',
+    emotionLabelEn: 'Polite Request'
   },
   {
     id: 'tr-03',
@@ -85,7 +91,10 @@ export const INITIAL_SURVIVAL_PHRASES: SurvivalPhrase[] = [
     phonetic: 'Puhr-mee-see, boos ee-nee leh-waht kahm-poos OON-NES Seh-kah-rahn tee-dahk?',
     contextNoteId: 'Untuk menuju UNNES Gunungpati dari pusat kota, naik Trans Semarang Koridor 6.',
     contextNoteEn: 'To reach UNNES Gunungpati from downtown, take Trans Semarang Corridor 6.',
-    tags: ['unnes', 'arah', 'direction']
+    tags: ['unnes', 'arah', 'direction'],
+    emotionTone: 'inquiry',
+    emotionLabelId: 'Tanya Rute Sopan',
+    emotionLabelEn: 'Route Inquiry'
   },
   {
     id: 'tr-04',
@@ -93,9 +102,13 @@ export const INITIAL_SURVIVAL_PHRASES: SurvivalPhrase[] = [
     phraseId: 'Kiri, Pak! / Kiri, Mas!',
     phraseEn: 'Stop on the left side, Sir! (Getting off)',
     phonetic: 'Kee-ree, Pahk! / Kee-ree, Mahs!',
-    contextNoteId: 'Ungkapan khas Indonesia saat ingin turun dari angkutan kota (angkot).',
+    contextNoteId: 'Ungkapan khas Indonesia saat ingin turun dari angkutan kota (angkot). Dilafalkan lantang dan tegas.',
     contextNoteEn: 'Universal shout inside an angkot minibus to notify the driver you wish to get off.',
-    tags: ['angkot', 'turun']
+    tags: ['angkot', 'turun'],
+    isImportant: true,
+    emotionTone: 'shout',
+    emotionLabelId: 'Seruan Angkot (Lantang & Berenergi)',
+    emotionLabelEn: 'Angkot Shout (Loud & Clear)'
   },
 
   // --- KULINER & RESTORAN ---
@@ -108,7 +121,10 @@ export const INITIAL_SURVIVAL_PHRASES: SurvivalPhrase[] = [
     contextNoteId: 'Lumpia adalah ikon kuliner Semarang. Ada dua varian: basah (fresh soft) dan goreng (crispy). Biasanya disajikan dengan saus cokelat manis dan daun bawang segar.',
     contextNoteEn: 'Lumpia is Semarang’s signature snack filled with bamboo shoots. Available in fresh or crispy fried.',
     tags: ['makanan', 'lumpia', 'khas'],
-    isImportant: true
+    isImportant: true,
+    emotionTone: 'culinary',
+    emotionLabelId: 'Pesan Warung (Akrab & Hangat)',
+    emotionLabelEn: 'Food Stall (Friendly Order)'
   },
   {
     id: 'cul-02',
@@ -119,7 +135,10 @@ export const INITIAL_SURVIVAL_PHRASES: SurvivalPhrase[] = [
     contextNoteId: 'Semarang memiliki perpaduan budaya Tionghoa dan Jawa. Di warung pecinan (seperti Semawis), penting menanyakan kehalalan jika Anda memiliki pantangan muslim.',
     contextNoteEn: 'Semarang has a rich Chinese-Javanese heritage. In Chinatown areas (e.g. Semawis Night Market), ask this if you require halal food.',
     tags: ['halal', 'muslim', 'pantangan'],
-    isImportant: true
+    isImportant: true,
+    emotionTone: 'inquiry',
+    emotionLabelId: 'Menanyakan Halal (Sopan & Hati-hati)',
+    emotionLabelEn: 'Dietary Inquiry (Polite)'
   },
   {
     id: 'cul-03',
@@ -129,7 +148,10 @@ export const INITIAL_SURVIVAL_PHRASES: SurvivalPhrase[] = [
     phonetic: 'Jah-ngahn pah-kye chah-bye yah, sah-yah tee-dahk koo-aht puh-dahs.',
     contextNoteId: 'Banyak masakan Jawa Tengah manis gurih, tapi sambal lokal sering kali sangat pedas.',
     contextNoteEn: 'Crucial phrase if your digestive system is not accustomed to Indonesian raw chili.',
-    tags: ['pedas', 'spicy', 'alergi']
+    tags: ['pedas', 'spicy', 'alergi'],
+    emotionTone: 'culinary',
+    emotionLabelId: 'Permintaan Ramah (Santai)',
+    emotionLabelEn: 'Friendly Request'
   },
   {
     id: 'cul-04',
@@ -139,7 +161,10 @@ export const INITIAL_SURVIVAL_PHRASES: SurvivalPhrase[] = [
     phonetic: 'Bee-sah meen-tah boong-koos oon-took dee-bah-wah poo-lahng?',
     contextNoteId: 'Di Indonesia, istilah to-go / takeaway biasanya disebut "dibungkus".',
     contextNoteEn: 'Takeaway food is universally termed "bungkus".',
-    tags: ['bungkus', 'takeaway']
+    tags: ['bungkus', 'takeaway'],
+    emotionTone: 'culinary',
+    emotionLabelId: 'Pesan Bungkus (Sopan & Santai)',
+    emotionLabelEn: 'Takeaway Request'
   },
 
   // --- ETIKET SOSIAL ---
@@ -152,7 +177,10 @@ export const INITIAL_SURVIVAL_PHRASES: SurvivalPhrase[] = [
     contextNoteId: '"Nuwun sewu" adalah ungkapan bahasa Jawa halus yang sangat dihormati saat lewat di depan orang yang lebih tua atau bertanya jalan.',
     contextNoteEn: '"Nuwun sewu" is the highest polite Javanese expression when passing elders or interrupting.',
     tags: ['sopan', 'jawa', 'nuwun sewu'],
-    isImportant: true
+    isImportant: true,
+    emotionTone: 'polite',
+    emotionLabelId: 'Unggah-Ungguh Jawa (Halus & Menghormati)',
+    emotionLabelEn: 'Javanese Politeness (Gentle Deference)'
   },
   {
     id: 'eti-02',
@@ -162,7 +190,11 @@ export const INITIAL_SURVIVAL_PHRASES: SurvivalPhrase[] = [
     phonetic: 'Mah-toor noo-woon sah-ngeht / Tuh-ree-mah kah-see bah-nyahk!',
     contextNoteId: 'Mengucapkan terima kasih dalam bahasa Jawa lokal langsung memikat hati warga Semarang.',
     contextNoteEn: 'Speaking local polite Javanese gratitude instantly builds rapport with locals.',
-    tags: ['terima kasih', 'jawa']
+    tags: ['terima kasih', 'jawa'],
+    isImportant: true,
+    emotionTone: 'polite',
+    emotionLabelId: 'Terima Kasih Tulus (Hangat & Grapyak)',
+    emotionLabelEn: 'Heartfelt Gratitude (Warm & Respectful)'
   },
   {
     id: 'eti-03',
@@ -172,7 +204,10 @@ export const INITIAL_SURVIVAL_PHRASES: SurvivalPhrase[] = [
     phonetic: 'Mong-goh, see-lah-kahn.',
     contextNoteId: 'Disertai sedikit membungkukkan badan dan tangan kanan mengarah ke depan dengan jempol menunjuk santun.',
     contextNoteEn: 'Accompanied by a gentle nod and right hand gesture. Avoid pointing with your index finger.',
-    tags: ['sopan', 'gestur']
+    tags: ['sopan', 'gestur'],
+    emotionTone: 'polite',
+    emotionLabelId: 'Mempersilakan Santun (Grapyak)',
+    emotionLabelEn: 'Courteous Welcome'
   },
 
   // --- SITUASI DARURAT ---
@@ -185,7 +220,10 @@ export const INITIAL_SURVIVAL_PHRASES: SurvivalPhrase[] = [
     contextNoteId: 'Di Semarang, rumah sakit rujukan utama terlengkap adalah RSUP Dr. Kariadi dan RS Roemani.',
     contextNoteEn: 'Main general referral hospitals in Semarang: RSUP Dr. Kariadi and RS Roemani.',
     tags: ['darurat', 'medis', 'rumah sakit'],
-    isImportant: true
+    isImportant: true,
+    emotionTone: 'emergency',
+    emotionLabelId: 'Darurat Medis (Mendesak & Panik)',
+    emotionLabelEn: 'Medical Emergency (Urgent)'
   },
   {
     id: 'emg-02',
@@ -196,7 +234,10 @@ export const INITIAL_SURVIVAL_PHRASES: SurvivalPhrase[] = [
     contextNoteId: 'Untuk surat kehilangan resmi, kunjungi Polsek terdekat atau Polrestabes Semarang.',
     contextNoteEn: 'To obtain a formal police loss report (Surat Kehilangan), visit nearest Polsek or Polrestabes.',
     tags: ['polisi', 'paspor', 'kehilangan'],
-    isImportant: true
+    isImportant: true,
+    emotionTone: 'emergency',
+    emotionLabelId: 'Laporan Kehilangan (Khawatir & Serius)',
+    emotionLabelEn: 'Loss Report (Anxious & Serious)'
   },
   {
     id: 'emg-03',
@@ -206,12 +247,15 @@ export const INITIAL_SURVIVAL_PHRASES: SurvivalPhrase[] = [
     phonetic: 'Sah-yah muh-rah-sah poo-seeng suh-kah-lee dahn duh-mahm teeng-gee.',
     contextNoteId: 'Katakan ini kepada dokter atau perawat di IGD (Instalasi Gawat Darurat).',
     contextNoteEn: 'Useful when arriving at an ER clinic or university health center.',
-    tags: ['gejala', 'sakit']
+    tags: ['gejala', 'sakit'],
+    emotionTone: 'emergency',
+    emotionLabelId: 'Keluhan Pasien Sakit (Lemah & Butuh Obat)',
+    emotionLabelEn: 'Patient Symptom (Weak & In Pain)'
   },
 
   // --- CULTURE SHOCK & HARIAN ---
   {
-    id: 'cul-01',
+    id: 'cult-01',
     categoryId: 'culture',
     phraseId: 'Sekarang sudah masuk waktu salat ya?',
     phraseEn: 'Is it prayer time right now?',
@@ -219,17 +263,23 @@ export const INITIAL_SURVIVAL_PHRASES: SurvivalPhrase[] = [
     contextNoteId: 'Di Semarang dan pulau Jawa, suara azan berkumandang 5 kali sehari dari masjid lokal. Hormati waktu tersebut dengan tidak memutar musik terlalu kencang.',
     contextNoteEn: 'Mosque calls to prayer echo 5 times daily. Lower music volume and respect local quiet hours.',
     tags: ['ibadah', 'salat', 'masjid'],
-    isImportant: true
+    isImportant: true,
+    emotionTone: 'casual',
+    emotionLabelId: 'Tanya Lingkungan Sekitar (Santai & Hormat)',
+    emotionLabelEn: 'Community Inquiry (Casual & Respectful)'
   },
   {
-    id: 'cul-02',
+    id: 'cult-02',
     categoryId: 'culture',
     phraseId: 'Jam berapa gerbang kos ditutup?',
     phraseEn: 'What time is the boarding house gate locked?',
     phonetic: 'Jahm buh-rah-pah gehr-bahng kos dee-too-toop?',
     contextNoteId: 'Sebagian besar rumah kos mahasiswa di Semarang (terutama sekitar UNNES Sekaran) memiliki jam malam (biasanya pukul 22.00 atau 23.00 WIB).',
     contextNoteEn: 'Most student boarding houses (kos) enforce curfew gates (typically 10 PM or 11 PM).',
-    tags: ['kos', 'jam malam', 'asrama']
+    tags: ['kos', 'jam malam', 'asrama'],
+    emotionTone: 'inquiry',
+    emotionLabelId: 'Tanya Aturan Kos (Sopan Mahasiswa)',
+    emotionLabelEn: 'Curfew Inquiry (Polite Student)'
   }
 ];
 

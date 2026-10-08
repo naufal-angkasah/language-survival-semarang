@@ -1,3 +1,5 @@
+import { EmotionTone } from '../utils/speechEngine';
+
 export type Language = 'id' | 'en';
 
 export type CategoryId = 'transport' | 'culinary' | 'etiquette' | 'emergency' | 'culture';
@@ -24,6 +26,9 @@ export interface SurvivalPhrase {
   tags: string[];
   audioFile?: string;
   isImportant?: boolean;
+  emotionTone?: EmotionTone;
+  emotionLabelId?: string;
+  emotionLabelEn?: string;
 }
 
 export interface EmergencyContact {
