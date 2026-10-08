@@ -43,11 +43,11 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Admin Dashboard Quick Switch Button */}
           <button
             onClick={onOpenAdmin}
-            className="flex items-center gap-1 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-2.5 py-1.5 rounded-xl active-press transition shadow-2xs"
+            className="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded-xl active-press transition shadow-xs ring-1 ring-slate-800"
             title="Buka Web Dashboard Admin Peneliti"
           >
             <LayoutDashboard className="w-3.5 h-3.5 text-blue-400" />
-            <span className="hidden sm:inline">Admin</span>
+            <span>Admin</span>
           </button>
 
           {/* PWA Install Button */}

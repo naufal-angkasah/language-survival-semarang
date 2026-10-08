@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Language } from '../types';
-import { Lock, Unlock, CheckCircle2, Star, Send, ShieldCheck } from 'lucide-react';
+import { Lock, Unlock, CheckCircle2, Star, Send, ShieldCheck, LayoutDashboard } from 'lucide-react';
 
 interface ValidatorModalProps {
   language: Language;
+  onOpenAdmin?: () => void;
 }
 
-export const ValidatorModal: React.FC<ValidatorModalProps> = ({ language }) => {
+export const ValidatorModal: React.FC<ValidatorModalProps> = ({ language, onOpenAdmin }) => {
   const [pin, setPin] = useState('');
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [pinError, setPinError] = useState(false);
@@ -84,6 +85,19 @@ export const ValidatorModal: React.FC<ValidatorModalProps> = ({ language }) => {
               <span>{language === 'id' ? 'Buka Instrumen Validasi' : 'Unlock Evaluation Sheet'}</span>
             </button>
           </form>
+
+          {onOpenAdmin && (
+            <div className="mt-3">
+              <button
+                type="button"
+                onClick={onOpenAdmin}
+                className="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 shadow-xs"
+              >
+                <LayoutDashboard className="w-3.5 h-3.5 text-blue-400" />
+                <span>Buka Web Admin Dashboard Peneliti</span>
+              </button>
+            </div>
+          )}
 
           <div className="mt-4 pt-4 border-t border-slate-100 text-[11px] text-slate-400">
             Kandidat Doktor: <strong className="text-slate-700">Nurtilek Kadyrov</strong> (UNNES 2026)

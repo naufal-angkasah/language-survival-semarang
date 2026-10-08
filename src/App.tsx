@@ -324,7 +324,10 @@ export const App: React.FC = () => {
 
         {/* TAB 4: VALIDATOR / EXPERT MODE */}
         {activeTab === 'validator' && (
-          <ValidatorModal language={language} />
+          <ValidatorModal
+            language={language}
+            onOpenAdmin={() => setViewMode('admin')}
+          />
         )}
       </main>
 
