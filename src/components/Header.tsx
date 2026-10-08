@@ -1,6 +1,6 @@
 import React from 'react';
 import { Language } from '../types';
-import { Globe2, Download, BookOpen } from 'lucide-react';
+import { Globe2, Download, BookOpen, LayoutDashboard } from 'lucide-react';
 
 interface HeaderProps {
   language: Language;
@@ -8,6 +8,7 @@ interface HeaderProps {
   deferredPrompt: any;
   onInstallPwa: () => void;
   isInstalled: boolean;
+  onOpenAdmin: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -16,9 +17,10 @@ export const Header: React.FC<HeaderProps> = ({
   deferredPrompt,
   onInstallPwa,
   isInstalled,
+  onOpenAdmin,
 }) => {
   return (
-    <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 py-3 shadow-sm">
+    <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 py-3 shadow-2xs">
       <div className="max-w-2xl mx-auto flex items-center justify-between gap-3">
         {/* Brand & Title */}
         <div className="flex items-center gap-2.5">
@@ -37,12 +39,22 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Admin Dashboard Quick Switch Button */}
+          <button
+            onClick={onOpenAdmin}
+            className="flex items-center gap-1 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-2.5 py-1.5 rounded-xl active-press transition shadow-2xs"
+            title="Buka Web Dashboard Admin Peneliti"
+          >
+            <LayoutDashboard className="w-3.5 h-3.5 text-blue-400" />
+            <span className="hidden sm:inline">Admin</span>
+          </button>
+
           {/* PWA Install Button */}
           {!isInstalled && deferredPrompt && (
             <button
               onClick={onInstallPwa}
-              className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl active-press transition shadow-sm"
+              className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl active-press transition shadow-2xs"
               title="Install to Homescreen"
             >
               <Download className="w-3.5 h-3.5" />

@@ -1,4 +1,4 @@
-import { CategoryInfo, SurvivalPhrase, EmergencyContact, QuizQuestion } from '../types';
+import { CategoryInfo, SurvivalPhrase, EmergencyContact, QuizQuestion, RespondentRecord, ValidatorRecord } from '../types';
 
 export const CATEGORIES: CategoryInfo[] = [
   {
@@ -53,7 +53,7 @@ export const CATEGORIES: CategoryInfo[] = [
   }
 ];
 
-export const SURVIVAL_PHRASES: SurvivalPhrase[] = [
+export const INITIAL_SURVIVAL_PHRASES: SurvivalPhrase[] = [
   // --- TRANSPORTASI ---
   {
     id: 'tr-01',
@@ -329,5 +329,94 @@ export const SAMPLE_QUIZ: QuizQuestion[] = [
         explanationEn: 'Incorrect. Left hand is considered disrespectful for social gestures in Indonesia.'
       }
     ]
+  }
+];
+
+// Initial mock respondent data for research demonstration
+export const INITIAL_RESPONDENTS: RespondentRecord[] = [
+  {
+    id: 'resp-01',
+    name: 'Almazbek Batyrov',
+    country: 'Kyrgyzstan',
+    university: 'UNNES',
+    program: 'KNB Scholarship',
+    preTestScore: 45,
+    postTestScore: 90,
+    gainScore: 45,
+    date: '2026-10-07'
+  },
+  {
+    id: 'resp-02',
+    name: 'Fatima El-Sayed',
+    country: 'Egypt',
+    university: 'UNNES',
+    program: 'Darmasiswa',
+    preTestScore: 50,
+    postTestScore: 95,
+    gainScore: 45,
+    date: '2026-10-07'
+  },
+  {
+    id: 'resp-03',
+    name: 'Li Wei',
+    country: 'China',
+    university: 'UNDIP',
+    program: 'Exchange Student',
+    preTestScore: 40,
+    postTestScore: 85,
+    gainScore: 45,
+    date: '2026-10-08'
+  },
+  {
+    id: 'resp-04',
+    name: 'Jean-Luc Rakoto',
+    country: 'Madagascar',
+    university: 'UNNES',
+    program: 'KNB Scholarship',
+    preTestScore: 55,
+    postTestScore: 100,
+    gainScore: 45,
+    date: '2026-10-08'
+  },
+  {
+    id: 'resp-05',
+    name: 'Khamphou Thammavong',
+    country: 'Laos',
+    university: 'UIN Walisongo',
+    program: 'Darmasiswa',
+    preTestScore: 35,
+    postTestScore: 80,
+    gainScore: 45,
+    date: '2026-10-08'
+  }
+];
+
+// Initial mock validator records
+export const INITIAL_VALIDATORS: ValidatorRecord[] = [
+  {
+    id: 'val-01',
+    validatorName: 'Prof. Dr. Yusro Edy Nugroho, M.Hum.',
+    expertise: 'Ahli Pembelajaran Bahasa (BIPA)',
+    contentScore: 5,
+    uiScore: 5,
+    bilingualScore: 5,
+    usabilityScore: 4,
+    averageScore: 4.75,
+    percentage: 95.0,
+    feedback: 'Struktur materi survival khas Semarang sangat kontekstual dan menjawab kebutuhan mahasiswa asing di luar kelas.',
+    date: '2026-10-07'
+  },
+  {
+    id: 'val-02',
+    validatorName: 'Dr. Wati Istanti, S.Pd., M.Pd.',
+    expertise: 'Ahli Budaya Lokal & Sosiokultural',
+    contentScore: 5,
+    uiScore: 5,
+    bilingualScore: 5,
+    usabilityScore: 5,
+    averageScore: 5.0,
+    percentage: 100.0,
+    feedback: 'Penekanan pada etika Jawa (nuwun sewu dan gestur santun) sangat autentik dan aplikatif untuk adaptasi mahasiswa.',
+    date: '2026-10-08'
   }
 ];

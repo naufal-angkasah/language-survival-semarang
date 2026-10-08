@@ -1,6 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Language, CategoryId } from './types';
-import { CATEGORIES, SURVIVAL_PHRASES, EMERGENCY_CONTACTS, SAMPLE_QUIZ } from './data/mockSurvivalData';
+import { Language, CategoryId, SurvivalPhrase, RespondentRecord, ValidatorRecord } from './types';
+import { 
+  CATEGORIES, 
+  INITIAL_SURVIVAL_PHRASES, 
+  EMERGENCY_CONTACTS, 
+  SAMPLE_QUIZ,
+  INITIAL_RESPONDENTS,
+  INITIAL_VALIDATORS 
+} from './data/mockSurvivalData';
 import { Header } from './components/Header';
 import { QuickSearch } from './components/QuickSearch';
 import { CategoryCard } from './components/CategoryCard';
@@ -9,10 +16,30 @@ import { BottomNav, ActiveTab } from './components/BottomNav';
 import { EmergencyModal } from './components/EmergencyModal';
 import { ValidatorModal } from './components/ValidatorModal';
 import { QuizModal } from './components/QuizModal';
+import { AdminDashboard } from './components/AdminDashboard';
 import { Bookmark, School, AlertCircle } from 'lucide-react';
 
 export const App: React.FC = () => {
-  // Application State
+  // Application View Mode (Mobile Learner App vs Web Admin Dashboard)
+  const [viewMode, setViewMode] = useState<'learner' | 'admin'>('learner');
+
+  // Shared Data State (Persistent & Synchronized)
+  const [phrases, setPhrases] = useState<SurvivalPhrase[]>(() => {
+    const saved = localStorage.getItem('semarang_phrases');
+    return saved ? JSON.parse(saved) : INITIAL_SURVIVAL_PHRASES;
+  });
+
+  const [respondents, setRespondents] = useState<RespondentRecord[]>(() => {
+    const saved = localStorage.getItem('semarang_respondents');
+    return saved ? JSON.parse(saved) : INITIAL_RESPONDENTS;
+  });
+
+  const [validators, setValidators] = useState<ValidatorRecord[]>(() => {
+    const saved = localStorage.getItem('semarang_validators');
+    return saved ? JSON.parse(saved) : INITIAL_VALIDATORS;
+  });
+
+  // Learner App State
   const [language, setLanguage] = useState<Language>('id');
   const [activeTab, setActiveTab] = useState<ActiveTab>('guide');
   const [selectedCategory, setSelectedCategory] = useState<CategoryId>('transport');
@@ -38,7 +65,6 @@ export const App: React.FC = () => {
       setIsInstalled(true);
     }
 
-    // Load saved bookmarks
     const savedBookmarks = localStorage.getItem('semarang_bookmarks');
     if (savedBookmarks) {
       try {
@@ -71,20 +97,34 @@ export const App: React.FC = () => {
     });
   };
 
-  // Filtered Phrases
+  // Content CMS Handlers
+  const handleAddPhrase = (newPhrase: SurvivalPhrase) => {
+    setPhrases((prev) => {
+      const updated = [newPhrase, ...prev];
+      localStorage.setItem('semarang_phrases', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const handleDeletePhrase = (id: string) => {
+    setPhrases((prev) => {
+      const updated = prev.filter((p) => p.id !== id);
+      localStorage.setItem('semarang_phrases', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  // Filtered Phrases in Learner View
   const filteredPhrases = useMemo(() => {
-    return SURVIVAL_PHRASES.filter((p) => {
-      // Bookmark filter
+    return phrases.filter((p) => {
       if (showBookmarksOnly && !bookmarkedIds.includes(p.id)) {
         return false;
       }
 
-      // Tag filter
       if (activeTag && !p.tags.includes(activeTag)) {
         return false;
       }
 
-      // Search query filter (searches across Indonesian, English, and tags)
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
         const matchId = p.phraseId.toLowerCase().includes(query);
@@ -95,20 +135,35 @@ export const App: React.FC = () => {
         return matchId || matchEn || matchNoteId || matchNoteEn || matchTag;
       }
 
-      // Category filter (only applied when search is empty)
       return p.categoryId === selectedCategory;
     });
-  }, [selectedCategory, searchQuery, activeTag, showBookmarksOnly, bookmarkedIds]);
+  }, [phrases, selectedCategory, searchQuery, activeTag, showBookmarksOnly, bookmarkedIds]);
 
+  // VIEW 1: WEB ADMIN DASHBOARD PENELITI
+  if (viewMode === 'admin') {
+    return (
+      <AdminDashboard
+        respondents={respondents}
+        validators={validators}
+        phrases={phrases}
+        onAddPhrase={handleAddPhrase}
+        onDeletePhrase={handleDeletePhrase}
+        onBackToApp={() => setViewMode('learner')}
+      />
+    );
+  }
+
+  // VIEW 2: APLIKASI MOBILE MAHASISWA (LEARNER PWA)
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
-      {/* Sticky Header */}
+      {/* Sticky Header with Admin Portal Switcher */}
       <Header
         language={language}
         onToggleLanguage={() => setLanguage((prev) => (prev === 'id' ? 'en' : 'id'))}
         deferredPrompt={deferredPrompt}
         onInstallPwa={handleInstallPwa}
         isInstalled={isInstalled}
+        onOpenAdmin={() => setViewMode('admin')}
       />
 
       {/* Main Content Area */}

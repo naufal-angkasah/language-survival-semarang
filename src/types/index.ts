@@ -58,3 +58,30 @@ export interface EvaluationItem {
   criteriaEn: string;
   score: number; // 1 to 5
 }
+
+// Data models for Researcher Web Admin Dashboard
+export interface RespondentRecord {
+  id: string;
+  name: string;
+  country: string;
+  university: string;
+  program: string;
+  preTestScore: number;
+  postTestScore: number;
+  gainScore: number;
+  date: string;
+}
+
+export interface ValidatorRecord {
+  id: string;
+  validatorName: string;
+  expertise: string;
+  contentScore: number;
+  uiScore: number;
+  bilingualScore: number;
+  usabilityScore: number;
+  averageScore: number;
+  percentage: number;
+  feedback: string;
+  date: string;
+}
