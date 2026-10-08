@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SurvivalPhrase, Language } from '../types';
 import { Volume2, VolumeX, Bookmark, BookmarkCheck, CheckCircle, Info } from 'lucide-react';
 
@@ -16,20 +16,67 @@ export const PhraseCard: React.FC<PhraseCardProps> = ({
   onToggleBookmark,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [idVoice, setIdVoice] = useState<SpeechSynthesisVoice | null>(null);
 
-  // Native Speech Synthesis Engine for realistic Indonesian audio playback
+  // Pre-load and select the most expressive & natural Indonesian voice available on the device
+  useEffect(() => {
+    const updateVoices = () => {
+      if (!('speechSynthesis' in window)) return;
+      const voices = window.speechSynthesis.getVoices();
+      
+      // Prioritize modern natural/neural Indonesian voices (Google, Microsoft Natural, Apple Damayanti)
+      const bestIdVoice =
+        voices.find((v) => (v.lang === 'id-ID' || v.lang === 'id_ID') && (v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Google'))) ||
+        voices.find((v) => v.lang.toLowerCase().startsWith('id')) ||
+        null;
+
+      if (bestIdVoice) {
+        setIdVoice(bestIdVoice);
+      }
+    };
+
+    updateVoices();
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = updateVoices;
+    }
+  }, []);
+
+  // Enhanced Speech Engine with Local Emotional Prosody (Intonasi Percakapan Warga Lokal)
   const handlePlayAudio = () => {
     if (!('speechSynthesis' in window)) {
       alert('Browser tidak mendukung pemutar suara.');
       return;
     }
 
-    window.speechSynthesis.cancel();
+    window.speechSynthesis.cancel(); // stop any active audio immediately
 
-    const utterance = new SpeechSynthesisUtterance(phrase.phraseId);
+    const text = phrase.phraseId.trim();
+    const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'id-ID';
-    utterance.rate = 0.88; // slightly slower for foreign learners
-    utterance.pitch = 1.0;
+
+    // Assign the most natural voice if detected
+    if (idVoice) {
+      utterance.voice = idVoice;
+    }
+
+    // Dynamic Prosody & Emotional Inflection based on local conversational context:
+    if (text.endsWith('?')) {
+      // Intonasi bertanya (Friendly Question: nada sedikit naik di ujung kata, tempo natural)
+      utterance.pitch = 1.12;
+      utterance.rate = 1.0;
+    } else if (text.endsWith('!') || text.toLowerCase().includes('kiri') || text.toLowerCase().includes('tolong')) {
+      // Intonasi seruan tegas / minta tolong / teriak angkot ("Kiri, Pak!" - bertenaga, jelas, bersemangat)
+      utterance.pitch = 1.1;
+      utterance.rate = 1.05;
+    } else if (text.toLowerCase().includes('nuwun sewu') || text.toLowerCase().includes('monggo') || text.toLowerCase().includes('matur')) {
+      // Intonasi santun Jawa (Halus, ramah, hangat / "grapyak", tempo mengayun sopan)
+      utterance.pitch = 1.04;
+      utterance.rate = 0.95;
+    } else {
+      // Percakapan sehari-hari mengalir normal
+      utterance.pitch = 1.06;
+      utterance.rate = 0.98;
+    }
 
     utterance.onstart = () => setIsPlaying(true);
     utterance.onend = () => setIsPlaying(false);
@@ -103,11 +150,11 @@ export const PhraseCard: React.FC<PhraseCardProps> = ({
                 ? 'bg-blue-800 text-white ring-4 ring-blue-100 animate-pulse'
                 : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/20'
             }`}
-            aria-label="Dengarkan pelafalan"
-            title="Dengarkan pelafalan suara"
+            aria-label="Dengarkan pelafalan emosional warga lokal"
+            title="Dengarkan pelafalan natural"
           >
             {isPlaying ? (
-              <VolumeX className="w-6 h-6" />
+              <VolumeX className="w-6 h-6 animate-pulse" />
             ) : (
               <Volume2 className="w-6 h-6 text-white" />
             )}
