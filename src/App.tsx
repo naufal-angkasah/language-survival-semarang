@@ -9,7 +9,7 @@ import { BottomNav, ActiveTab } from './components/BottomNav';
 import { EmergencyModal } from './components/EmergencyModal';
 import { ValidatorModal } from './components/ValidatorModal';
 import { QuizModal } from './components/QuizModal';
-import { Bookmark, Sparkles, AlertCircle } from 'lucide-react';
+import { Bookmark, School, AlertCircle } from 'lucide-react';
 
 export const App: React.FC = () => {
   // Application State
@@ -101,7 +101,7 @@ export const App: React.FC = () => {
   }, [selectedCategory, searchQuery, activeTag, showBookmarksOnly, bookmarkedIds]);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans selection:bg-orange-500 selection:text-white">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
       {/* Sticky Header */}
       <Header
         language={language}
@@ -116,11 +116,11 @@ export const App: React.FC = () => {
         {/* TAB 1: GUIDE (BUKU SAKU PANDUAN) */}
         {activeTab === 'guide' && (
           <div className="space-y-4">
-            {/* Academic Greeting Banner */}
-            <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white rounded-3xl p-4 sm:p-5 shadow-sm border border-slate-800 relative overflow-hidden">
+            {/* Academic Greeting Banner in Clean Royal Blue */}
+            <div className="bg-blue-700 text-white rounded-3xl p-4 sm:p-5 shadow-sm shadow-blue-700/15 border border-blue-600 relative overflow-hidden">
               <div className="relative z-10">
-                <div className="flex items-center gap-1.5 text-xs text-orange-400 font-bold mb-1">
-                  <Sparkles className="w-3.5 h-3.5" />
+                <div className="flex items-center gap-1.5 text-xs text-blue-100 font-bold mb-1">
+                  <School className="w-3.5 h-3.5" />
                   <span>
                     {language === 'id'
                       ? 'Selamat Datang di Kota Semarang'
@@ -132,10 +132,10 @@ export const App: React.FC = () => {
                     ? 'Buku Saku Adaptasi Bahasa & Budaya Mahasiswa Asing'
                     : 'Language & Cultural Survival Handbook for International Students'}
                 </h2>
-                <p className="text-xs text-slate-300 mt-1 max-w-lg leading-relaxed">
+                <p className="text-xs text-blue-100 mt-1 max-w-lg leading-relaxed">
                   {language === 'id'
-                    ? 'Media pembelajaran mandiri berbasis Mobile (MALL) untuk memudahkan komunikasi praktis sehari-hari di kampus dan masyarakat lokal.'
-                    : 'Mobile-Assisted Language Learning (MALL) guide designed for effortless daily interactions in Semarang.'}
+                    ? 'Media pembelajaran mandiri berbasis Mobile (MALL) untuk memudahkan komunikasi praktis sehari-hari di kampus dan lingkungan lokal Semarang.'
+                    : 'Mobile-Assisted Language Learning (MALL) handbook designed for practical daily communication in Semarang.'}
                 </p>
               </div>
             </div>
@@ -155,7 +155,7 @@ export const App: React.FC = () => {
               }}
             />
 
-            {/* 5 Thematic Category Carousel/Grid (Hidden if actively searching) */}
+            {/* 5 Thematic Category Grid (Hidden if actively searching) */}
             {!searchQuery && !activeTag && !showBookmarksOnly && (
               <div>
                 <div className="flex items-center justify-between mb-2">
@@ -164,9 +164,9 @@ export const App: React.FC = () => {
                   </h3>
                   <button
                     onClick={() => setShowBookmarksOnly(true)}
-                    className="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1"
+                    className="text-xs font-bold text-blue-700 hover:text-blue-800 flex items-center gap-1"
                   >
-                    <Bookmark className="w-3 h-3" />
+                    <Bookmark className="w-3.5 h-3.5 text-blue-700" />
                     <span>{language === 'id' ? 'Tersimpan' : 'Saved'} ({bookmarkedIds.length})</span>
                   </button>
                 </div>
@@ -186,16 +186,16 @@ export const App: React.FC = () => {
 
             {/* Bookmark Filter Indicator */}
             {showBookmarksOnly && (
-              <div className="bg-orange-50 border border-orange-200 rounded-2xl p-3 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2 text-orange-950 font-bold">
-                  <Bookmark className="w-4 h-4 text-orange-600" />
+              <div className="bg-blue-50 border border-blue-200 rounded-2xl p-3 flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2 text-blue-950 font-bold">
+                  <Bookmark className="w-4 h-4 text-blue-700" />
                   <span>
                     {language === 'id' ? 'Menampilkan Frasa Tersimpan' : 'Showing Saved Phrases'} ({filteredPhrases.length})
                   </span>
                 </div>
                 <button
                   onClick={() => setShowBookmarksOnly(false)}
-                  className="text-xs font-bold text-orange-700 hover:underline"
+                  className="text-xs font-bold text-blue-700 hover:underline"
                 >
                   {language === 'id' ? 'Tutup Filter' : 'Clear Filter'}
                 </button>
@@ -230,7 +230,7 @@ export const App: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-10 bg-white border border-slate-200 rounded-2xl p-6">
+              <div className="text-center py-10 bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs">
                 <AlertCircle className="w-8 h-8 text-slate-400 mx-auto mb-2" />
                 <p className="text-sm font-bold text-slate-700">
                   {language === 'id' ? 'Tidak ada kosakata yang cocok' : 'No phrases found'}
@@ -247,7 +247,7 @@ export const App: React.FC = () => {
                       setActiveTag(null);
                       setShowBookmarksOnly(false);
                     }}
-                    className="mt-3 text-xs font-bold bg-slate-900 text-white px-3 py-1.5 rounded-lg"
+                    className="mt-3 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-1.5 rounded-xl transition"
                   >
                     {language === 'id' ? 'Reset Pencarian' : 'Reset Search'}
                   </button>

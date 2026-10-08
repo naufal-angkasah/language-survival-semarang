@@ -43,7 +43,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 py-1.5 shadow-lg">
+    <nav className="fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 py-1.5 shadow-sm">
       <div className="max-w-md mx-auto grid grid-cols-4 gap-1">
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
@@ -53,13 +53,13 @@ export const BottomNav: React.FC<BottomNavProps> = ({
               onClick={() => onTabChange(item.id)}
               className={`flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition active-press ${
                 isActive
-                  ? 'text-orange-600 font-bold'
+                  ? 'text-blue-700 font-bold'
                   : 'text-slate-500 hover:text-slate-800 font-medium'
               }`}
             >
               <div
-                className={`p-1 rounded-lg transition ${
-                  isActive ? 'bg-orange-50 text-orange-600' : 'text-slate-500'
+                className={`p-1.5 rounded-xl transition ${
+                  isActive ? 'bg-blue-50 text-blue-700 shadow-2xs' : 'text-slate-400'
                 }`}
               >
                 {item.icon}

@@ -29,10 +29,10 @@ export const QuickSearch: React.FC<QuickSearchProps> = ({
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder={
             language === 'id'
-              ? 'Cari kosakata, situasi, atau kata kunci (cth: lumpia, bus, sakit)...'
-              : 'Search phrases, situations, or keywords (e.g., becak, hospital)...'
+              ? 'Cari frasa, kata kunci, situasi (cth: lumpia, bus, sakit)...'
+              : 'Search phrases, situations, keywords (e.g. becak, hospital)...'
           }
-          className="w-full pl-10 pr-9 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-sm transition"
+          className="w-full pl-10 pr-9 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 shadow-xs transition"
         />
         {searchQuery && (
           <button
@@ -45,10 +45,10 @@ export const QuickSearch: React.FC<QuickSearchProps> = ({
         )}
       </div>
 
-      {/* Quick Tag Pills */}
+      {/* Quick Tag Pills in Blue-White Theme */}
       <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-xs">
-        <span className="text-slate-500 font-medium shrink-0">
-          {language === 'id' ? 'Populer:' : 'Quick:'}
+        <span className="text-slate-500 font-semibold shrink-0">
+          {language === 'id' ? 'Topik Populer:' : 'Quick Tags:'}
         </span>
         {POPULAR_TAGS.map((tag) => {
           const isSelected = activeTag === tag;
@@ -56,10 +56,10 @@ export const QuickSearch: React.FC<QuickSearchProps> = ({
             <button
               key={tag}
               onClick={() => onSelectTag(isSelected ? null : tag)}
-              className={`px-2.5 py-1 rounded-full font-medium transition active-press shrink-0 border ${
+              className={`px-3 py-1 rounded-full font-semibold transition active-press shrink-0 border ${
                 isSelected
-                  ? 'bg-orange-600 text-white border-orange-600 shadow-sm'
-                  : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
+                  ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                  : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300 hover:text-blue-700'
               }`}
             >
               #{tag}

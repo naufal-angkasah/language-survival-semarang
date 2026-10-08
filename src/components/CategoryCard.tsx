@@ -16,19 +16,20 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
   onSelect,
 }) => {
   const getIcon = () => {
+    const iconClass = isSelected ? 'w-5 h-5 text-white' : 'w-5 h-5 text-blue-700';
     switch (category.id) {
       case 'transport':
-        return <Bus className="w-5 h-5 text-blue-600" />;
+        return <Bus className={iconClass} />;
       case 'culinary':
-        return <UtensilsCrossed className="w-5 h-5 text-amber-600" />;
+        return <UtensilsCrossed className={iconClass} />;
       case 'etiquette':
-        return <Smile className="w-5 h-5 text-emerald-600" />;
+        return <Smile className={iconClass} />;
       case 'emergency':
-        return <ShieldAlert className="w-5 h-5 text-rose-600" />;
+        return <ShieldAlert className={iconClass} />;
       case 'culture':
-        return <Compass className="w-5 h-5 text-purple-600" />;
+        return <Compass className={iconClass} />;
       default:
-        return <Compass className="w-5 h-5 text-slate-600" />;
+        return <Compass className={iconClass} />;
     }
   };
 
@@ -37,14 +38,14 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
       onClick={onSelect}
       className={`w-full text-left p-3.5 rounded-2xl border transition active-press relative ${
         isSelected
-          ? 'bg-slate-900 text-white border-slate-900 shadow-md ring-2 ring-orange-500/50'
-          : 'bg-white text-slate-900 border-slate-200 hover:border-slate-300 shadow-sm'
+          ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-400/40'
+          : 'bg-white text-slate-900 border-slate-200 hover:border-blue-300 shadow-2xs'
       }`}
     >
       <div className="flex items-start gap-3">
         <div
-          className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-            isSelected ? 'bg-slate-800' : 'bg-slate-50 border border-slate-100'
+          className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition ${
+            isSelected ? 'bg-blue-700' : 'bg-blue-50 border border-blue-100'
           }`}
         >
           {getIcon()}
@@ -59,10 +60,10 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
               {language === 'id' ? category.titleId : category.titleEn}
             </h3>
             <span
-              className={`text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 ${
+              className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
                 isSelected
-                  ? 'bg-orange-500 text-white'
-                  : 'bg-slate-100 text-slate-600'
+                  ? 'bg-white/20 text-white'
+                  : 'bg-blue-50 text-blue-700 border border-blue-100'
               }`}
             >
               {category.badge}
@@ -70,7 +71,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
           </div>
           <p
             className={`text-xs line-clamp-2 ${
-              isSelected ? 'text-slate-300' : 'text-slate-500'
+              isSelected ? 'text-blue-100' : 'text-slate-500'
             }`}
           >
             {language === 'id' ? category.descId : category.descEn}

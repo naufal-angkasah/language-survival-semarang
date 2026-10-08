@@ -16,7 +16,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({ questions, language }) => 
   const currentQ = questions[currentIdx];
 
   const handleSelectOption = (optId: string) => {
-    if (selectedOption !== null) return; // prevent changing after answered
+    if (selectedOption !== null) return;
     setSelectedOption(optId);
 
     const chosen = currentQ.options.find((o) => o.id === optId);
@@ -44,40 +44,45 @@ export const QuizModal: React.FC<QuizModalProps> = ({ questions, language }) => 
   return (
     <div className="space-y-4 pb-12">
       {/* Header Info */}
-      <div className="bg-gradient-to-r from-orange-600 to-amber-600 text-white p-4 rounded-2xl shadow-sm">
+      <div className="bg-blue-600 text-white p-4 sm:p-5 rounded-2xl shadow-sm shadow-blue-600/15">
         <div className="flex items-center justify-between gap-2">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider bg-orange-700/80 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-extrabold uppercase tracking-wider bg-white/20 text-white px-2 py-0.5 rounded-full">
               {language === 'id' ? 'Instrumen Riset Disertasi' : 'Dissertation Research Test'}
             </span>
-            <h3 className="text-sm font-extrabold mt-1">
+            <h3 className="text-sm sm:text-base font-extrabold mt-1 text-white">
               {language === 'id'
                 ? 'Simulasi Pre-Test & Post-Test Budaya'
                 : 'Cultural Adaptation Situation Quiz'}
             </h3>
+            <p className="text-xs text-blue-100 mt-0.5">
+              {language === 'id'
+                ? 'Pengukuran pemahaman etiket & komunikasi bertahan hidup di Semarang'
+                : 'Assessment of survival communication and etiquette in Semarang'}
+            </p>
           </div>
-          <Award className="w-8 h-8 text-orange-200 shrink-0" />
+          <Award className="w-8 h-8 text-blue-200 shrink-0" />
         </div>
       </div>
 
       {!isFinished ? (
-        <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3">
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs space-y-3">
           {/* Progress */}
           <div className="flex items-center justify-between text-xs font-bold text-slate-500 border-b border-slate-100 pb-2">
             <span>
               {language === 'id' ? 'Pertanyaan' : 'Question'} {currentIdx + 1} / {questions.length}
             </span>
-            <span className="text-orange-600">
+            <span className="text-blue-700 font-extrabold">
               {language === 'id' ? 'Skor Saat Ini' : 'Current Score'}: {score}
             </span>
           </div>
 
           {/* Skenario Situasi */}
-          <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 text-xs text-slate-800">
-            <span className="font-bold text-orange-700 block mb-0.5">
+          <div className="bg-blue-50/60 border border-blue-100 rounded-xl p-3 text-xs text-slate-800">
+            <span className="font-bold text-blue-900 block mb-0.5">
               📍 {language === 'id' ? 'Skenario Situasi:' : 'Scenario:'}
             </span>
-            <p className="leading-relaxed">
+            <p className="leading-relaxed text-slate-700">
               {language === 'id' ? currentQ.situationId : currentQ.situationEn}
             </p>
           </div>
@@ -93,7 +98,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({ questions, language }) => 
               const isChosen = selectedOption === opt.id;
               const hasAnswered = selectedOption !== null;
 
-              let btnStyle = 'bg-white border-slate-200 text-slate-800 hover:border-slate-300';
+              let btnStyle = 'bg-white border-slate-200 text-slate-800 hover:border-blue-300';
               if (hasAnswered) {
                 if (opt.isCorrect) {
                   btnStyle = 'bg-emerald-50 border-emerald-500 text-emerald-950 font-bold';
@@ -126,7 +131,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({ questions, language }) => 
                   {/* Penjelasan jika sudah dijawab */}
                   {hasAnswered && (isChosen || opt.isCorrect) && (
                     <div
-                      className={`text-[11px] p-2 rounded-lg mt-1 ml-7 ${
+                      className={`text-[11px] p-2.5 rounded-lg mt-1 ml-7 ${
                         opt.isCorrect
                           ? 'bg-emerald-100/70 text-emerald-900'
                           : 'bg-rose-100/70 text-rose-900'
@@ -144,23 +149,23 @@ export const QuizModal: React.FC<QuizModalProps> = ({ questions, language }) => 
           {selectedOption && (
             <button
               onClick={handleNext}
-              className="w-full mt-3 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm"
+              className="w-full mt-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm shadow-blue-600/20"
             >
               <span>{currentIdx < questions.length - 1 ? 'Soal Berikutnya' : 'Lihat Hasil Tes'}</span>
-              <ArrowRight className="w-3.5 h-3.5 text-orange-400" />
+              <ArrowRight className="w-3.5 h-3.5 text-white" />
             </button>
           )}
         </div>
       ) : (
         /* KARTU HASIL AKHIR */
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 text-center shadow-sm max-w-sm mx-auto">
-          <div className="w-14 h-14 rounded-2xl bg-orange-600 text-white flex items-center justify-center mx-auto mb-3 shadow-md">
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 text-center shadow-xs max-w-sm mx-auto">
+          <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center mx-auto mb-3 shadow-md shadow-blue-500/20">
             <Award className="w-7 h-7" />
           </div>
           <h3 className="text-base font-extrabold text-slate-900">
             {language === 'id' ? 'Hasil Tes Situasi Budaya' : 'Cultural Test Result'}
           </h3>
-          <p className="text-2xl font-black text-orange-600 my-2">
+          <p className="text-2xl font-black text-blue-700 my-2">
             {score} / {questions.length}
           </p>
           <p className="text-xs text-slate-500 mb-5 leading-relaxed">
@@ -170,7 +175,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({ questions, language }) => 
           </p>
           <button
             onClick={handleReset}
-            className="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-1.5"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm shadow-blue-600/20"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Ulangi Tes</span>

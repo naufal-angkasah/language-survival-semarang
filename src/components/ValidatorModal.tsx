@@ -46,16 +46,16 @@ export const ValidatorModal: React.FC<ValidatorModalProps> = ({ language }) => {
     <div className="space-y-4 pb-12">
       {/* PIN LOCK SCREEN */}
       {!isUnlocked ? (
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 text-center max-w-sm mx-auto shadow-sm">
-          <div className="w-14 h-14 rounded-2xl bg-slate-900 text-orange-400 flex items-center justify-center mx-auto mb-3 shadow-md">
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 text-center max-w-sm mx-auto shadow-xs">
+          <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center mx-auto mb-3 shadow-md shadow-blue-500/20">
             <Lock className="w-6 h-6" />
           </div>
           <h3 className="text-base font-bold text-slate-900">
-            {language === 'id' ? 'Mode Evaluasi Pakar & Dosen' : 'Expert Validator Mode'}
+            {language === 'id' ? 'Mode Evaluasi Dewan Pakar' : 'Expert Validator Mode'}
           </h3>
-          <p className="text-xs text-slate-500 mt-1 mb-5">
+          <p className="text-xs text-slate-500 mt-1 mb-5 leading-relaxed">
             {language === 'id'
-              ? 'Masukkan PIN otorisasi dewan ahli untuk membuka lembar validasi kelayakan media disertasi.'
+              ? 'Masukkan PIN otorisasi dewan penguji untuk mengakses instrumen validasi kelayakan media disertasi.'
               : 'Enter the 4-digit authorization PIN to access the academic dissertation validation instrument.'}
           </p>
 
@@ -67,7 +67,7 @@ export const ValidatorModal: React.FC<ValidatorModalProps> = ({ language }) => {
                 value={pin}
                 onChange={(e) => setPin(e.target.value)}
                 placeholder="PIN (Demo: 2026)"
-                className="w-full text-center tracking-widest text-lg font-mono py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 font-bold text-slate-900"
+                className="w-full text-center tracking-widest text-lg font-mono py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 font-bold text-slate-900"
               />
               {pinError && (
                 <p className="text-xs text-rose-600 font-medium mt-1.5">
@@ -78,27 +78,27 @@ export const ValidatorModal: React.FC<ValidatorModalProps> = ({ language }) => {
 
             <button
               type="submit"
-              className="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-3 rounded-xl active-press transition flex items-center justify-center gap-1.5 shadow-sm"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-3 rounded-xl active-press transition flex items-center justify-center gap-1.5 shadow-sm shadow-blue-600/20"
             >
-              <Unlock className="w-4 h-4 text-orange-400" />
-              <span>{language === 'id' ? 'Buka Akses Evaluasi' : 'Unlock Evaluation Sheet'}</span>
+              <Unlock className="w-4 h-4 text-white" />
+              <span>{language === 'id' ? 'Buka Instrumen Validasi' : 'Unlock Evaluation Sheet'}</span>
             </button>
           </form>
 
           <div className="mt-4 pt-4 border-t border-slate-100 text-[11px] text-slate-400">
-            Kandidat Doktor: <strong className="text-slate-600">Nurtilek Kadyrov</strong> (UNNES 2026)
+            Kandidat Doktor: <strong className="text-slate-700">Nurtilek Kadyrov</strong> (UNNES 2026)
           </div>
         </div>
       ) : submitted ? (
         /* SUCCESS CONFIRMATION */
-        <div className="bg-emerald-50 border border-emerald-200 rounded-3xl p-6 text-center max-w-sm mx-auto">
-          <div className="w-14 h-14 rounded-2xl bg-emerald-600 text-white flex items-center justify-center mx-auto mb-3">
+        <div className="bg-white border border-blue-200 rounded-3xl p-6 text-center max-w-sm mx-auto shadow-sm">
+          <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center mx-auto mb-3 shadow-md shadow-blue-500/20">
             <CheckCircle2 className="w-8 h-8" />
           </div>
-          <h3 className="text-base font-bold text-emerald-950">
+          <h3 className="text-base font-bold text-slate-900">
             Penilaian Berhasil Tersimpan!
           </h3>
-          <p className="text-xs text-emerald-800 mt-1 mb-4 leading-relaxed">
+          <p className="text-xs text-slate-600 mt-1 mb-4 leading-relaxed">
             Terima kasih atas evaluasi dan masukan dewan pakar. Data skor validasi otomatis disinkronkan ke Web Dashboard Peneliti.
           </p>
           <button
@@ -107,25 +107,25 @@ export const ValidatorModal: React.FC<ValidatorModalProps> = ({ language }) => {
               setIsUnlocked(false);
               setPin('');
             }}
-            className="bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold px-4 py-2 rounded-xl transition"
+            className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition"
           >
             Selesai & Kunci Kembali
           </button>
         </div>
       ) : (
         /* FORM LEMBAR PENILAIAN VALIDASI */
-        <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-4">
+        <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-3xl p-5 shadow-xs space-y-4">
           <div className="border-b border-slate-100 pb-3 flex items-start justify-between gap-2">
             <div>
-              <div className="flex items-center gap-1.5 text-xs font-bold text-orange-600 uppercase tracking-wide">
-                <ShieldCheck className="w-4 h-4" />
+              <div className="flex items-center gap-1.5 text-xs font-bold text-blue-700 uppercase tracking-wide">
+                <ShieldCheck className="w-4 h-4 text-blue-600" />
                 Instrumen Validasi Ahli
               </div>
               <h3 className="text-base font-extrabold text-slate-900 mt-0.5">
                 Formulir Kelayakan Media MALL
               </h3>
             </div>
-            <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full shrink-0">
+            <span className="text-[10px] bg-blue-50 text-blue-700 border border-blue-200 font-bold px-2 py-0.5 rounded-full shrink-0">
               PIN Verified
             </span>
           </div>
@@ -140,7 +140,7 @@ export const ValidatorModal: React.FC<ValidatorModalProps> = ({ language }) => {
                 value={validatorName}
                 onChange={(e) => setValidatorName(e.target.value)}
                 placeholder="Prof. / Dr. / Dosen Validator"
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-orange-500 text-slate-900"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-600 text-slate-900"
               />
             </div>
             <div>
@@ -148,7 +148,7 @@ export const ValidatorModal: React.FC<ValidatorModalProps> = ({ language }) => {
               <select
                 value={expertise}
                 onChange={(e) => setExpertise(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-orange-500 text-slate-900"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-600 text-slate-900"
               >
                 <option value="Ahli Media Pembelajaran">Ahli Media Pembelajaran & Digital</option>
                 <option value="Ahli Bahasa (BIPA)">Ahli Pembelajaran Bahasa (BIPA)</option>
@@ -185,13 +185,13 @@ export const ValidatorModal: React.FC<ValidatorModalProps> = ({ language }) => {
                 desc: 'Kelancaran akses tanpa internet (offline) dan kepraktisan penggunaan.',
               },
             ].map((crit) => (
-              <div key={crit.id} className="p-3 bg-slate-50 border border-slate-100 rounded-2xl">
+              <div key={crit.id} className="p-3 bg-slate-50 border border-slate-200/80 rounded-2xl">
                 <div className="flex items-start justify-between gap-2 mb-1.5">
                   <div>
                     <h5 className="text-xs font-bold text-slate-900">{crit.title}</h5>
                     <p className="text-[11px] text-slate-500">{crit.desc}</p>
                   </div>
-                  <span className="text-xs font-black text-orange-600 bg-orange-100/60 px-2 py-0.5 rounded-md shrink-0">
+                  <span className="text-xs font-extrabold text-blue-700 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-md shrink-0">
                     Skor: {scores[crit.id]}/5
                   </span>
                 </div>
@@ -201,13 +201,13 @@ export const ValidatorModal: React.FC<ValidatorModalProps> = ({ language }) => {
                       type="button"
                       key={star}
                       onClick={() => handleScoreChange(crit.id, star)}
-                      className={`flex-1 py-1 rounded-lg text-xs font-bold transition flex items-center justify-center gap-0.5 ${
+                      className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-0.5 ${
                         scores[crit.id] >= star
-                          ? 'bg-orange-600 text-white'
+                          ? 'bg-blue-600 text-white shadow-2xs'
                           : 'bg-white text-slate-400 border border-slate-200'
                       }`}
                     >
-                      <Star className="w-3 h-3 fill-current" />
+                      <Star className="w-3.5 h-3.5 fill-current" />
                       <span>{star}</span>
                     </button>
                   ))}
@@ -226,15 +226,15 @@ export const ValidatorModal: React.FC<ValidatorModalProps> = ({ language }) => {
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
               placeholder="Tuliskan masukan untuk penyempurnaan produk disertasi..."
-              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-orange-500"
+              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-blue-600"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-3 rounded-xl active-press transition flex items-center justify-center gap-2 shadow-md"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-3 rounded-xl active-press transition flex items-center justify-center gap-2 shadow-md shadow-blue-600/20"
           >
-            <Send className="w-4 h-4 text-orange-400" />
+            <Send className="w-4 h-4 text-white" />
             <span>Kirim Lembar Validasi Ahli</span>
           </button>
         </form>
