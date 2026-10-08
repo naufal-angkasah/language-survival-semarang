@@ -4,7 +4,7 @@ import { exportToCsv } from '../utils/exportCsv';
 import { 
   Users, Award, BookOpen, Download, Plus, Trash2, 
   Search, ArrowLeft, CheckCircle2, TrendingUp,
-  FileSpreadsheet, ShieldAlert, Volume2, VolumeX
+  FileSpreadsheet, ShieldAlert, Volume2, VolumeX, UserPlus
 } from 'lucide-react';
 import { speakIndonesian, stopSpeech, EmotionTone } from '../utils/speechEngine';
 
@@ -14,6 +14,10 @@ interface AdminDashboardProps {
   phrases: SurvivalPhrase[];
   onAddPhrase: (phrase: SurvivalPhrase) => void;
   onDeletePhrase: (id: string) => void;
+  onAddRespondent?: (resp: RespondentRecord) => void;
+  onDeleteRespondent?: (id: string) => void;
+  onAddValidator?: (val: ValidatorRecord) => void;
+  onDeleteValidator?: (id: string) => void;
   onBackToApp: () => void;
 }
 
@@ -23,12 +27,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   phrases,
   onAddPhrase,
   onDeletePhrase,
+  onAddRespondent,
+  onDeleteRespondent,
+  onAddValidator,
+  onDeleteValidator,
   onBackToApp,
 }) => {
   const [activeTab, setActiveTab] = useState<'respondents' | 'validators' | 'cms'>('respondents');
-  const [searchQuery, setSearchQuery] = useState('');
 
-  // Add Phrase Modal State
+  // Add Phrase Modal State (Tab 3)
   const [isAddingPhrase, setIsAddingPhrase] = useState(false);
   const [newPhraseId, setNewPhraseId] = useState('');
   const [newPhraseEn, setNewPhraseEn] = useState('');
@@ -37,6 +44,25 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [newEmotionTone, setNewEmotionTone] = useState<EmotionTone>('casual');
   const [newContextNote, setNewContextNote] = useState('');
   const [testingPhraseId, setTestingPhraseId] = useState<string | null>(null);
+
+  // Add Respondent Form State (Tab 1)
+  const [isAddingRespondent, setIsAddingRespondent] = useState(false);
+  const [respName, setRespName] = useState('');
+  const [respCountry, setRespCountry] = useState('');
+  const [respUniversity, setRespUniversity] = useState('UNNES');
+  const [respProgram, setRespProgram] = useState('KNB Scholarship');
+  const [respPreTest, setRespPreTest] = useState(50);
+  const [respPostTest, setRespPostTest] = useState(90);
+
+  // Add Validator Form State (Tab 2)
+  const [isAddingValidator, setIsAddingValidator] = useState(false);
+  const [valName, setValName] = useState('');
+  const [valExpertise, setValExpertise] = useState('Ahli Pembelajaran BIPA');
+  const [valContentScore, setValContentScore] = useState(5);
+  const [valUiScore, setValUiScore] = useState(5);
+  const [valBilingualScore, setValBilingualScore] = useState(5);
+  const [valUsabilityScore, setValUsabilityScore] = useState(5);
+  const [valFeedback, setValFeedback] = useState('');
 
   // Compute Research Analytics
   const totalRespondents = respondents.length;
@@ -50,7 +76,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     ? (validators.reduce((acc, v) => acc + v.percentage, 0) / validators.length).toFixed(1)
     : '0';
 
-  // Export to Excel/SPSS Handler
+  // Export Handlers
   const handleExportRespondents = () => {
     const exportData = respondents.map((r, i) => ({
       No: i + 1,
@@ -83,6 +109,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     exportToCsv('Lembar_Validasi_Dewan_Pakar_Nurtilek', exportData);
   };
 
+  // Submit Handlers
   const handleCreatePhrase = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPhraseId.trim() || !newPhraseEn.trim()) return;
@@ -109,6 +136,57 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setIsAddingPhrase(false);
   };
 
+  const handleCreateRespondent = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!respName.trim() || !respCountry.trim()) return;
+
+    const gain = Number(respPostTest) - Number(respPreTest);
+    const newRecord: RespondentRecord = {
+      id: `resp-${Date.now()}`,
+      name: respName.trim(),
+      country: respCountry.trim(),
+      university: respUniversity,
+      program: respProgram,
+      preTestScore: Number(respPreTest),
+      postTestScore: Number(respPostTest),
+      gainScore: gain,
+      date: new Date().toISOString().split('T')[0],
+    };
+
+    onAddRespondent?.(newRecord);
+    setRespName('');
+    setRespCountry('');
+    setIsAddingRespondent(false);
+  };
+
+  const handleCreateValidator = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!valName.trim()) return;
+
+    const scoresSum = Number(valContentScore) + Number(valUiScore) + Number(valBilingualScore) + Number(valUsabilityScore);
+    const avg = scoresSum / 4;
+    const pct = (avg / 5) * 100;
+
+    const newRecord: ValidatorRecord = {
+      id: `val-${Date.now()}`,
+      validatorName: valName.trim(),
+      expertise: valExpertise,
+      contentScore: Number(valContentScore),
+      uiScore: Number(valUiScore),
+      bilingualScore: Number(valBilingualScore),
+      usabilityScore: Number(valUsabilityScore),
+      averageScore: Number(avg.toFixed(2)),
+      percentage: Number(pct.toFixed(1)),
+      feedback: valFeedback.trim() || 'Instrumen sangat layak dan kontekstual.',
+      date: new Date().toISOString().split('T')[0],
+    };
+
+    onAddValidator?.(newRecord);
+    setValName('');
+    setValFeedback('');
+    setIsAddingValidator(false);
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
       {/* Top Academic Admin Bar */}
@@ -118,54 +196,53 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <button
               onClick={onBackToApp}
               className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center gap-1.5 text-xs font-bold active-press"
-              title="Kembali ke Aplikasi Mobile"
+              title="Kembali ke tampilan aplikasi mahasiswa"
             >
-              <ArrowLeft className="w-4 h-4" />
-              <span className="hidden sm:inline">Ke Aplikasi HP</span>
+              <ArrowLeft className="w-4 h-4 text-blue-600" />
+              <span>Ke Aplikasi HP</span>
             </button>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full">
-                  Admin Dashboard Riset
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider bg-blue-100 text-blue-800 px-1.5 py-0.2 rounded">
+                  PORTAL RISET S3 UNNES
                 </span>
-                <span className="text-xs text-slate-400">|</span>
-                <span className="text-xs font-bold text-slate-700">UNNES 2026</span>
+                <span className="text-[10px] text-slate-400 font-mono">Borg & Gall R&D</span>
               </div>
-              <h1 className="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight">
-                Pusat Kendali Disertasi: Nurtilek Kadyrov
+              <h1 className="text-sm sm:text-base font-extrabold text-slate-900 leading-tight">
+                Dashboard Peneliti: Nurtilek Kadyrov
               </h1>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="hidden md:flex items-center gap-1 text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-xl">
+            <span className="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-xl font-bold flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>Cloud Sync Online</span>
-            </div>
+              Live Data
+            </span>
           </div>
         </div>
       </header>
 
-      {/* Main Admin Content Container */}
-      <main className="max-w-5xl w-full mx-auto p-4 sm:p-6 space-y-6 flex-1">
-        {/* KPI Analytical Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      {/* Main Content Dashboard */}
+      <main className="max-w-5xl w-full mx-auto px-4 py-6 flex-1 space-y-6">
+        {/* KPI Analytics Cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-2xs">
             <div className="flex items-center justify-between text-slate-500 mb-2">
               <span className="text-xs font-bold uppercase tracking-wide">Total Responden</span>
               <Users className="w-4 h-4 text-blue-600" />
             </div>
             <p className="text-2xl font-black text-slate-900">{totalRespondents}</p>
-            <span className="text-[11px] text-blue-700 font-medium">Mahasiswa Internasional</span>
+            <span className="text-[11px] text-slate-400">Mahasiswa Internasional</span>
           </div>
 
           <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-2xs">
             <div className="flex items-center justify-between text-slate-500 mb-2">
               <span className="text-xs font-bold uppercase tracking-wide">Rata-Rata Pre-Test</span>
-              <TrendingUp className="w-4 h-4 text-slate-400" />
+              <span className="text-xs font-bold text-slate-400">Baseline</span>
             </div>
             <p className="text-2xl font-black text-slate-700">{avgPreTest}</p>
-            <span className="text-[11px] text-slate-400 font-medium">Skor baseline awal</span>
+            <span className="text-[11px] text-slate-400">Skala 0–100</span>
           </div>
 
           <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-2xs">
@@ -174,7 +251,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <TrendingUp className="w-4 h-4 text-emerald-600" />
             </div>
             <p className="text-2xl font-black text-emerald-600">{avgPostTest}</p>
-            <span className="text-[11px] text-emerald-700 font-medium">Naik signifikan (+{(Number(avgPostTest) - Number(avgPreTest)).toFixed(1)} pts)</span>
+            <span className="text-[11px] text-emerald-700 font-bold">
+              +{totalRespondents ? (Number(avgPostTest) - Number(avgPreTest)).toFixed(1) : 0} Gain Score
+            </span>
           </div>
 
           <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-2xs">
@@ -187,7 +266,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         </div>
 
-        {/* Tab Navigation Pill in Clean Blue & White */}
+        {/* Tab Navigation Pill */}
         <div className="flex items-center gap-2 border-b border-slate-200 pb-3 overflow-x-auto">
           <button
             onClick={() => setActiveTab('respondents')}
@@ -198,7 +277,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             }`}
           >
             <Users className="w-4 h-4" />
-            <span>Data Responden Mahasiswa ({respondents.length})</span>
+            <span>Data Responden ({respondents.length})</span>
           </button>
 
           <button
@@ -226,27 +305,136 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </button>
         </div>
 
-        {/* TAB 1: DATA RESPONDEN & EXCEL EXPORT */}
+        {/* TAB 1: DATA RESPONDEN & INPUT */}
         {activeTab === 'respondents' && (
           <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-xs space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h3 className="text-base font-extrabold text-slate-900">
-                  Rekapitulasi Nilai Pre-Test & Post-Test
+                  Rekapitulasi Nilai Pre-Test & Post-Test Responden
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Format tabel siap diekspor ke SPSS untuk pengujian statistik Paired Sample T-Test.
+                  Input data survei mahasiswa atau ekspor langsung ke format SPSS (.csv) untuk uji Paired Sample T-Test.
                 </p>
               </div>
 
-              <button
-                onClick={handleExportRespondents}
-                className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl active-press transition shadow-xs"
-              >
-                <FileSpreadsheet className="w-4 h-4" />
-                <span>Unduh ke Excel / SPSS (.csv)</span>
-              </button>
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  onClick={() => setIsAddingRespondent(!isAddingRespondent)}
+                  className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl active-press transition shadow-xs"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  <span>+ Input Responden Baru</span>
+                </button>
+
+                <button
+                  onClick={handleExportRespondents}
+                  className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl active-press transition shadow-xs"
+                >
+                  <FileSpreadsheet className="w-4 h-4" />
+                  <span>Unduh ke Excel / SPSS (.csv)</span>
+                </button>
+              </div>
             </div>
+
+            {/* FORM INPUT RESPONDEN BARU */}
+            {isAddingRespondent && (
+              <form onSubmit={handleCreateRespondent} className="bg-blue-50/70 border border-blue-200 p-4 rounded-2xl space-y-3 animate-fadeIn">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-blue-900 flex items-center gap-1.5">
+                  <UserPlus className="w-4 h-4 text-blue-600" />
+                  <span>Formulir Input Data Mahasiswa Responden Baru</span>
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">Nama Mahasiswa:</label>
+                    <input
+                      type="text"
+                      required
+                      value={respName}
+                      onChange={(e) => setRespName(e.target.value)}
+                      placeholder="Contoh: Jean-Pierre Dubois"
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">Negara Asal:</label>
+                    <input
+                      type="text"
+                      required
+                      value={respCountry}
+                      onChange={(e) => setRespCountry(e.target.value)}
+                      placeholder="Contoh: France"
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">Kampus Tujuan:</label>
+                    <select
+                      value={respUniversity}
+                      onChange={(e) => setRespUniversity(e.target.value)}
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900"
+                    >
+                      <option value="UNNES">UNNES (Sekaran/Gunungpati)</option>
+                      <option value="UNDIP">UNDIP (Tembalang)</option>
+                      <option value="UIN Walisongo">UIN Walisongo (Ngaliyan)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">Program Studi / Beasiswa:</label>
+                    <select
+                      value={respProgram}
+                      onChange={(e) => setRespProgram(e.target.value)}
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900"
+                    >
+                      <option value="KNB Scholarship">KNB Scholarship</option>
+                      <option value="Darmasiswa RI">Darmasiswa RI</option>
+                      <option value="Exchange Student">Exchange Student</option>
+                      <option value="Mandiri BIPA">Mandiri BIPA</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">Nilai Pre-Test (0–100):</label>
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      required
+                      value={respPreTest}
+                      onChange={(e) => setRespPreTest(Number(e.target.value))}
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900 font-bold"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">Nilai Post-Test (0–100):</label>
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      required
+                      value={respPostTest}
+                      onChange={(e) => setRespPostTest(Number(e.target.value))}
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900 font-bold text-emerald-700"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddingRespondent(false)}
+                    className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-600 bg-white border border-slate-200"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-1.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-xs"
+                  >
+                    Simpan Data Responden
+                  </button>
+                </div>
+              </form>
+            )}
 
             {/* Table */}
             <div className="overflow-x-auto border border-slate-200 rounded-2xl">
@@ -261,6 +449,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <th className="py-3 px-3 text-center">Post-Test</th>
                     <th className="py-3 px-3 text-center">Peningkatan</th>
                     <th className="py-3 px-3">Tanggal</th>
+                    <th className="py-3 px-3 text-center">Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-800">
@@ -278,6 +467,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       <td className="py-3 px-3 text-center font-black text-emerald-600">{r.postTestScore}</td>
                       <td className="py-3 px-3 text-center font-bold text-blue-700">+{r.gainScore}</td>
                       <td className="py-3 px-3 text-slate-400 font-mono text-[11px]">{r.date}</td>
+                      <td className="py-3 px-3 text-center">
+                        {onDeleteRespondent && (
+                          <button
+                            onClick={() => onDeleteRespondent(r.id)}
+                            className="p-1 text-slate-300 hover:text-rose-600 transition"
+                            title="Hapus data responden ini"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -286,7 +486,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         )}
 
-        {/* TAB 2: HASIL DEWAN PAKAR */}
+        {/* TAB 2: HASIL DEWAN PAKAR & INPUT */}
         {activeTab === 'validators' && (
           <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-xs space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -295,19 +495,142 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   Penilaian Kelayakan Dewan Penguji Disertasi
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Rekapitulasi data angket validasi ahli materi bahasa, ahli media, dan ahli budaya.
+                  Rekapitulasi dan input angket validasi ahli materi bahasa, desain media, dan budaya lokal.
                 </p>
               </div>
 
-              <button
-                onClick={handleExportValidators}
-                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl active-press transition shadow-xs"
-              >
-                <Download className="w-4 h-4" />
-                <span>Unduh Lembar Validasi (.csv)</span>
-              </button>
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  onClick={() => setIsAddingValidator(!isAddingValidator)}
+                  className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl active-press transition shadow-xs"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>+ Input Validasi Dosen</span>
+                </button>
+
+                <button
+                  onClick={handleExportValidators}
+                  className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl active-press transition shadow-xs"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Unduh Lembar Validasi (.csv)</span>
+                </button>
+              </div>
             </div>
 
+            {/* FORM INPUT VALIDATOR BARU */}
+            {isAddingValidator && (
+              <form onSubmit={handleCreateValidator} className="bg-blue-50/70 border border-blue-200 p-4 rounded-2xl space-y-3 animate-fadeIn">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-blue-900 flex items-center gap-1.5">
+                  <Award className="w-4 h-4 text-blue-600" />
+                  <span>Formulir Input Lembar Penilaian Dewan Pakar</span>
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">Nama Lengkap & Gelar Dosen Penguji:</label>
+                    <input
+                      type="text"
+                      required
+                      value={valName}
+                      onChange={(e) => setValName(e.target.value)}
+                      placeholder="Contoh: Dr. Budi Prasetyo, M.Hum."
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">Bidang Kepakaran:</label>
+                    <input
+                      type="text"
+                      required
+                      value={valExpertise}
+                      onChange={(e) => setValExpertise(e.target.value)}
+                      placeholder="Contoh: Ahli Sosiolinguistik & BIPA"
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-900"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">Kelayakan Bahasa (1–5):</label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={5}
+                      required
+                      value={valContentScore}
+                      onChange={(e) => setValContentScore(Number(e.target.value))}
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-bold"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">Desain Media UI (1–5):</label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={5}
+                      required
+                      value={valUiScore}
+                      onChange={(e) => setValUiScore(Number(e.target.value))}
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-bold"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">Bilingual Audio (1–5):</label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={5}
+                      required
+                      value={valBilingualScore}
+                      onChange={(e) => setValBilingualScore(Number(e.target.value))}
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-bold"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">Aksesibilitas MALL (1–5):</label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={5}
+                      required
+                      value={valUsabilityScore}
+                      onChange={(e) => setValUsabilityScore(Number(e.target.value))}
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-bold"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Catatan Kualitatif / Saran Perbaikan:</label>
+                  <textarea
+                    rows={2}
+                    value={valFeedback}
+                    onChange={(e) => setValFeedback(e.target.value)}
+                    placeholder="Tuliskan catatan dari lembar revisi dosen penguji..."
+                    className="w-full p-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-900"
+                  />
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddingValidator(false)}
+                    className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-600 bg-white border border-slate-200"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-1.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-xs"
+                  >
+                    Simpan Nilai Pakar
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* List Validators */}
             <div className="space-y-3">
               {validators.map((v) => (
                 <div key={v.id} className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
@@ -316,9 +639,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       <h4 className="text-sm font-bold text-slate-900">{v.validatorName}</h4>
                       <span className="text-xs text-blue-700 font-semibold">{v.expertise}</span>
                     </div>
-                    <div className="text-right">
-                      <span className="text-lg font-black text-blue-800">{v.percentage}%</span>
-                      <span className="text-[11px] block font-bold text-emerald-700">Sangat Layak</span>
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <span className="text-lg font-black text-blue-800">{v.percentage}%</span>
+                        <span className="text-[11px] block font-bold text-emerald-700">Sangat Layak</span>
+                      </div>
+                      {onDeleteValidator && (
+                        <button
+                          onClick={() => onDeleteValidator(v.id)}
+                          className="p-1.5 text-slate-300 hover:text-rose-600 transition rounded"
+                          title="Hapus data penilaian ini"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
                   </div>
 
@@ -353,7 +687,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         )}
 
-        {/* TAB 3: CMS KOSAKATA & MODUL */}
+        {/* TAB 3: CMS KOSAKATA & MODUL (INPUT FRASA) */}
         {activeTab === 'cms' && (
           <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-xs space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -368,16 +702,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
               <button
                 onClick={() => setIsAddingPhrase(true)}
-                className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl active-press transition"
+                className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl active-press transition shadow-xs"
               >
                 <Plus className="w-4 h-4" />
-                <span>Tambah Kosakata Baru</span>
+                <span>+ Tambah Kosakata Baru</span>
               </button>
             </div>
 
             {/* Modal Form Tambah Frasa Baru */}
             {isAddingPhrase && (
-              <form onSubmit={handleCreatePhrase} className="bg-blue-50/60 border border-blue-200 p-4 rounded-2xl space-y-3">
+              <form onSubmit={handleCreatePhrase} className="bg-blue-50/60 border border-blue-200 p-4 rounded-2xl space-y-3 animate-fadeIn">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-blue-900">
                   Formulir Tambah Kosakata Baru
                 </h4>

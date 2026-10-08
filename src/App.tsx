@@ -114,6 +114,40 @@ export const App: React.FC = () => {
     });
   };
 
+  // Respondent Data Handlers
+  const handleAddRespondent = (newRespondent: RespondentRecord) => {
+    setRespondents((prev) => {
+      const updated = [newRespondent, ...prev];
+      localStorage.setItem('semarang_respondents', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const handleDeleteRespondent = (id: string) => {
+    setRespondents((prev) => {
+      const updated = prev.filter((r) => r.id !== id);
+      localStorage.setItem('semarang_respondents', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  // Validator Data Handlers
+  const handleAddValidator = (newValidator: ValidatorRecord) => {
+    setValidators((prev) => {
+      const updated = [newValidator, ...prev];
+      localStorage.setItem('semarang_validators', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const handleDeleteValidator = (id: string) => {
+    setValidators((prev) => {
+      const updated = prev.filter((v) => v.id !== id);
+      localStorage.setItem('semarang_validators', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
   // Filtered Phrases in Learner View
   const filteredPhrases = useMemo(() => {
     return phrases.filter((p) => {
@@ -148,6 +182,10 @@ export const App: React.FC = () => {
         phrases={phrases}
         onAddPhrase={handleAddPhrase}
         onDeletePhrase={handleDeletePhrase}
+        onAddRespondent={handleAddRespondent}
+        onDeleteRespondent={handleDeleteRespondent}
+        onAddValidator={handleAddValidator}
+        onDeleteValidator={handleDeleteValidator}
         onBackToApp={() => setViewMode('learner')}
       />
     );
